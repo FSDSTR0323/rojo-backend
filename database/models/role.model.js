@@ -3,9 +3,10 @@ const { Schema } = mongoose.Schema;
 
 const roleSchema = Schema(
 	{
-		firstName: { type: String, required: true },
-		permissions: [],
-		deletedAt: { type: Date },
+		name: { type: String, required: true },
+		permissions: [{
+			type: String
+		}],
 	},
 	{
 		timestamps: true,
