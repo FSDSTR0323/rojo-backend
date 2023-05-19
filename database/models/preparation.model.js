@@ -8,6 +8,7 @@ const preparationSchema = Schema(
 		violations: [{ type: Schema.Types.ObjectId, ref: 'haccp' }],
 		status: [{ type: Schema.Types.ObjectId, ref: 'recipeStatus' }],
 		deletedAt: { type: Date },
+		//TODO: Created by, Modified by
 	},
 	{
 		timestamps: true,

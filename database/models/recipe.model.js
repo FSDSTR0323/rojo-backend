@@ -17,5 +17,7 @@ const recipeSchema = Schema(
 	}
 );
 
+//TODO: CreatedBy, ModifiedBy
+
 module.exports = mongoose.model('Recipe', recipeSchema);
 

@@ -11,4 +11,6 @@ const recipeSatusSchema = Schema(
 	}
 );
 
+//TODO: CreatedBy, ModifiedBy
+
 module.exports = mongoose.model('RecipeStatus', recipeSatusSchema);

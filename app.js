@@ -1,7 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
@@ -14,7 +13,7 @@ const indexRouter = require('./routes/index');
 // app and middleware setup
 const app = express();
 
-// database connection - TODO: Uncomment once we have the database ready
+// database connection
 const mongoDB =
 	'mongodb+srv://' +
 	process.env.DB_USER +

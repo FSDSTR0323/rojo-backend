@@ -13,4 +13,6 @@ const userSchema = Schema(
 	}
 );
 
+//TODO: CreatedBy, ModifiedBy
+
 module.exports = mongoose.model('User', userSchema);
