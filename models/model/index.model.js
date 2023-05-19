@@ -1,8 +1,8 @@
-const userModel = require('./User');
-const roleModel = require('./Role');
-const haccpModel = require('./HACCP');
-const preparationModel = require('./Preparation');
-const recipeModel = require('./Recipe');
-const recipeStatusModel = require('./recipeStatus');
+const userModel = require('./user.model');
+const roleModel = require('./role.model');
+const haccpModel = require('./haccp.model');
+const preparationModel = require('./preparation.model');
+const recipeModel = require('./recipe.model');
+const recipeStatusModel = require('./recipeStatus.model');
 
 module.exports = { userModel, roleModel };

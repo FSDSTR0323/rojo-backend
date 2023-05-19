@@ -14,4 +14,4 @@ const preparationSchema = Schema(
 	}
 );
 
-module.exports = mongoose.model('preparation', preparationSchema);
+module.exports = mongoose.model('Preparation', preparationSchema);

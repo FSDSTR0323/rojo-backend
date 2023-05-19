@@ -11,4 +11,4 @@ const haccpSchema = Schema(
 	}
 );
 
-module.exports = mongoose.model('haccp', haccpSchema);
+module.exports = mongoose.model('Haccp', haccpSchema);

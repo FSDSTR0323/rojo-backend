@@ -11,4 +11,4 @@ const recipeSatusSchema = Schema(
 	}
 );
 
-module.exports = mongoose.model('recipeStatus', recipeSatusSchema);
+module.exports = mongoose.model('RecipeStatus', recipeSatusSchema);
