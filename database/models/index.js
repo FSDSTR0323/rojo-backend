@@ -1,3 +1,5 @@
+const customerModel = require('./customer.model')
+const restaurantModel = require('./restaurant.model')
 const userModel = require('./user.model');
 const roleModel = require('./role.model');
 const haccpModel = require('./haccp.model');

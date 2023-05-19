@@ -1,14 +1,19 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const userSchema = Schema(
+const userSchema = new Schema(
 	{
+		customerId: {
+			type: Schema.Types.ObjectId,
+			ref: 'Customer',
+			required: true,
+		},
 		firstName: { type: String, required: true },
 		lastName: { type: String, required: true },
 		nickname: { type: String, required: true },
 		password: { type: String, required: true },
 		email: { type: String },
-		role: { type: Schema.Types.ObjectId, ref: 'Role' },
+		role: { type: Schema.Types.ObjectId, ref: 'Role', required: true },
 		//TODO: permissions
 		deletedAt: { type: Date },
 		createdBy: { type: Schema.Types.ObjectId, ref: 'User' },

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const preparationSchema = Schema(
+const preparationSchema = new Schema(
 	{
 		user: [{ type: Schema.Types.ObjectId, ref: 'user' }],
 		recipe: [{ type: Schema.Types.ObjectId, ref: 'recipe' }],

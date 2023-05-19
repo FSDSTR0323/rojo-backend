@@ -9,6 +9,7 @@ const ignoreFavicon = require('./middleware/ignoreFavicon')
 require('dotenv').config();
 
 const indexRouter = require('./routes/index');
+const userRouter = require('./routes/user')
 
 // app and middleware setup
 const app = express();
@@ -39,6 +40,7 @@ app.use(ignoreFavicon)
 
 // routes
 app.use('/', indexRouter);
+app.use('/user', userRouter)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

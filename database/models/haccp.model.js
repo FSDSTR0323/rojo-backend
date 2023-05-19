@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const haccpSchema = Schema(
+const haccpSchema = new Schema(
 	{
 		name: { type: String, required: true },
 		deletedAt: { type: Date },
