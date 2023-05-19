@@ -1,3 +1,3 @@
 const databases = require('./model');
 
-module.exports = {databases};
+module.exports = { databases };

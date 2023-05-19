@@ -5,5 +5,4 @@ const preparationModel = require('./Preparation');
 const recipeModel = require('./Recipe');
 const recipeStatusModel = require('./recipeStatus');
 
-
 module.exports = { userModel, roleModel };
