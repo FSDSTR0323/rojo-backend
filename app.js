@@ -9,7 +9,7 @@ const ignoreFavicon = require('./middleware/ignoreFavicon')
 require('dotenv').config();
 
 const indexRouter = require('./routes/index');
-const userRouter = require('./routes/user')
+const userRouter = require('./routes/user');
 
 // app and middleware setup
 const app = express();

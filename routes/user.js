@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
-
-
-const { User } = require('../database');
+const User = require('../database/models/user.model');
 const userController = require('../controllers/UserController.js');
 
 
@@ -15,7 +12,21 @@ router.get('/:id?', (req, res, next) => {
 });
 
 // POST create a new user if doesn't exists
-router.post('/user', userController.createUser);
+router.post('/', userController.createUser);
+
+// GET user by ID
+router.get('/:id', userController.getUser);
+
+// PUT update user by ID
+router.put('/:id', userController.updateUser);
+
+// DELETE user by ID
+router.delete('/:id', userController.deleteUser);
+
+// DELETE (soft)
+
+router.delete('/:id', userController.softdeleteUser);
+
 
 
 
