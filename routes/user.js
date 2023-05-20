@@ -5,17 +5,20 @@ const userController = require('../controllers/UserController.js');
 
 
 
-/* GET home page. */
+// GET user by ID
 router.get('/:id?', (req, res, next) => {
-  User.find({}).then(userDoc => console.log(userDoc))
-  res.send('user OK');
+  User.find({})
+    .then(userDoc => {
+      console.log(userDoc);
+      res.send('user OK');
+    })
+    .catch(error => {
+      res.status(500).json({ error: error.message });
+    });
 });
 
 // POST create a new user if doesn't exists
 router.post('/', userController.createUser);
-
-// GET user by ID
-router.get('/:id', userController.getUser);
 
 // PUT update user by ID
 router.put('/:id', userController.updateUser);
@@ -25,7 +28,7 @@ router.delete('/:id', userController.deleteUser);
 
 // DELETE (soft)
 
-router.delete('/:id', userController.softdeleteUser);
+router.delete('/:id/softdelete', userController.softdeleteUser);
 
 
 
