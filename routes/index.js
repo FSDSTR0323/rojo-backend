@@ -1,9 +1,11 @@
-var express = require('express');
-var router = express.Router();
+const express = require("express");
+const generalRouter = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.send('Welcome to Food Informer');
-});
+const userRouter = require('./user');
+const { jwtMiddleware, authRouter } = require("../security");
 
-module.exports = router;
+generalRouter.use("/", authRouter);
+generalRouter.use("/user", jwtMiddleware, userRouter);
+
+
+module.exports = generalRouter;

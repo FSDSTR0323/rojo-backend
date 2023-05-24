@@ -1,4 +1,4 @@
-const { userModel, roleModel } = require('./models');
+const models = require('./models');
 
-module.exports = { userModel, roleModel };
+module.exports = models;
 
