@@ -1,3 +1,4 @@
-const databases = require('./models');
+const models = require('./models');
 
-module.exports = { databases };
+module.exports = models;
+
