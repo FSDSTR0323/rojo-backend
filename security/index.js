@@ -25,60 +25,66 @@ authRouter.post('/register', async (req, res) => {
 		return res.status(400).json({ error: { register: errorMessage } });
 	}
 
-	// TODO: Try - catch
-	const existingUser = await User.findOne({ nickname });
-	const existingCustomer = await Customer.findOne({ cif: customerCif });
-	// if the user is found, return an error because there is already a user registered
-	if (existingUser) {
-		return res
-			.status(400)
-			.json({ error: { nickname: 'Nickname already registered' } });
-	} else if (existingCustomer) {
-		return res.status(400).json({ error: { cif: 'CIF already registered' } });
-	} else {
-		// Register company first
-		//TODO: Try-catch (return 500 error)
-		const newCustomer = new Customer({
-			name: customerName,
-			address: customerAddress,
-			email: customerEmail,
-			cif: customerCif,
-		});
-		const savedCustomer = await newCustomer.save();
-
-		//Register user
-		//TODO: Try-catch
-		const newUser = new User({
-			customerId: savedCustomer._id,
-			firstName,
-			lastName,
-			nickname,
-			password,
-			email,
-			role: 1,
-		});
-		const savedUser = await newUser.save();
-		if (savedUser) {
-			return res.status(201).json({
-				token: savedUser.generateJWT(),
-				user: {
-					firstName: savedUser.firstName,
-					email: savedUser.email,
-					role: savedUser.role,
-					permissions: savedUser.getPermissions(),
-				},
-			});
-		} else {
+	// Register user and customer
+	try {
+		const existingUser = await User.findOne({ nickname });
+		const existingCustomer = await Customer.findOne({ cif: customerCif });
+		// trying to register an existing user
+		if (existingUser) {
 			return res
-				.status(500)
-				.json({ error: { firstName: 'Error creating new User :(', err } });
+				.status(400)
+				.json({ error: { nickname: 'Nickname already registered' } });
+		} else if (existingCustomer) {
+			return res.status(400).json({ error: { cif: 'CIF already registered' } });
+		} else {
+			// Register company first
+			//TODO: Try-catch (return 500 error)
+			const newCustomer = new Customer({
+				customerName,
+				customerAddress,
+				customerEmail,
+				customerCif,
+			});
+			const savedCustomer = await newCustomer.save();
+
+			//Register user
+			//TODO: Try-catch
+			const newUser = new User({
+				customerId: savedCustomer._id,
+				firstName,
+				lastName,
+				nickname,
+				password,
+				email,
+				role: 1,
+			});
+			const savedUser = await newUser.save();
+			if (savedUser) {
+				return res.status(201).json({
+					token: savedUser.generateJWT(),
+					user: {
+						firstName: savedUser.firstName,
+						email: savedUser.email,
+						role: savedUser.role,
+						permissions: savedUser.getPermissions(),
+					},
+				});
+			} else {
+				return res
+					.status(500)
+					.json({ error: { firstName: 'Error creating new User :(', err } });
+			}
 		}
+	} catch (err) {
+		return res.status(500).json({
+			error: { register: 'Error Registering user', error: err.message },
+		});
 	}
 });
 
 authRouter.post('/login', async (req, res) => {
 	const { nickname, password } = req.body;
-	
+
 	// Check required parameters for User login
 	const requiredProperties = ['nickname', 'password'];
 	const errorMessage = checkRequiredProperties(req, requiredProperties);
@@ -110,7 +116,7 @@ authRouter.post('/login', async (req, res) => {
 	} catch (err) {
 		return res
 			.status(500)
-			.json({ error: { register: 'Error Login in :(', error: err.message } });
+			.json({ error: { register: 'Error Logging in', error: err.message } });
 	}
 });
 
