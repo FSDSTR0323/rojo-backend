@@ -1,11 +1,12 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
 const userRouter = require('./user');
-const { jwtMiddleware, authRouter } = require("../security");
+const authRouter = require('../security');
 
-router.use("/", authRouter);
-router.use("/user", jwtMiddleware, userRouter);
+const jwtMiddleware = require('../middleware/jwtMiddleware');
 
+router.use('/', authRouter);
+router.use('/user', jwtMiddleware, userRouter);
 
 module.exports = router;
