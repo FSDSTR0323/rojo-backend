@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const jwtSecret = process.env.JWT_SECRET;
 
 const jwtMiddleware = (req, res, next) => {
-	// Collect header "Authentication", whichc comes in the form of "Bearer XXXXX...", so we keep the token and discard "Bearer"
+	// collect header "Authentication", whichc comes in the form of "Bearer XXXXX...", so we keep the token and discard "Bearer"
 	const authHeader = req.headers['authorization'];
 
 	if (!authHeader)
@@ -14,14 +14,14 @@ const jwtMiddleware = (req, res, next) => {
 
 	let tokenPayload;
 	try {
-		// If verify() works, it will return the token payload
+		// if verify() works, it will return the token payload
 		tokenPayload = jwt.verify(token, jwtSecret);
 	} catch (error) {
-		// If it fails, will be because of an invalid token, so we return 401
+		// if it fails, will be because of an invalid token, so we return 401
 		return res.status(401).json({ error: 'Unauthorized' });
 	}
 
-	// Store the token data inside req.jwtPayload, so it is accessible in the following req objects when calling next
+	// store the token data inside req.jwtPayload, so it is accessible in the following req objects when calling next
 	req.jwtPayload = tokenPayload;
 	next();
 };

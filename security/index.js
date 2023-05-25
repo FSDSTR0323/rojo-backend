@@ -3,30 +3,45 @@ const { User, Customer } = require('../database/');
 
 const authRouter = express.Router();
 
-const properties = ['firstName', 'lastName', 'nickname', 'password', 'email'];
+const checkRequiredProperties = (req, requiredProps) => {
+	const missingProperties = requiredProps.filter((prop) => !req.body[prop]);
+
+	let errorMessage = '';
+
+	if (missingProperties.length > 0) {
+		errorMessage = `${missingProperties.join(', ')} not received`;
+	}
+
+	return errorMessage;
+};
 
 authRouter.post('/register', async (req, res) => {
 	const { firstName, lastName, nickname, password, email } = req.body;
 	const { customerName, customerAddress, customerEmail, customerCif } =
 		req.body;
 
-	// * Make sure request has the email
-	if (!firstName || !lastName || !nickname || !password || !email) {
-		let errorMessage = '';
+	// Check required parameters for users and customer
+	const requiredProperties = [
+		'firstName',
+		'lastName',
+		'nickname',
+		'password',
+		'email',
+		'customerName',
+		'customerAddress',
+		'customerEmail',
+		'customerCif',
+	];
+	const errorMessage = checkRequiredProperties(req, requiredProperties);
 
-		properties.forEach((prop) => {
-			if (!req.body[prop]) {
-				errorMessage += `${prop} not received\n`;
-			}
-		});
-
+	if (errorMessage) {
 		return res.status(400).json({ error: { register: errorMessage } });
 	}
 
 	// TODO: Try - catch
 	const existingUser = await User.findOne({ nickname: nickname });
 	const existingCustomer = await Customer.findOne({ cif: customerCif });
-	// * If the user is found, return an error because there is already a user registered
+	// if the user is found, return an error because there is already a user registered
 	if (existingUser) {
 		return res
 			.status(400)
@@ -74,11 +89,9 @@ authRouter.post('/register', async (req, res) => {
 	}
 });
 
-// ! --------------------------------------
-
 authRouter.post('/login', async (req, res) => {
 	const { nickname, password } = req.body;
-	// * Validate, email and password were provided in the request
+	// validate, email and password were provided in the request
 	// TODO: More concrete error message
 	if (!nickname || !password) {
 		return res
@@ -92,11 +105,11 @@ authRouter.post('/login', async (req, res) => {
 				.status(400)
 				.json({ error: { nickname: 'User not found, please Register' } });
 		}
-		// * Validate password with bcrypt library
+		// validate password with bcrypt library
 		if (!foundUser.comparePassword(password)) {
 			return res.status(400).json({ error: { password: 'Invalid Password' } });
 		}
-		// * if everything is ok, return the new token and user data
+		// if everything is ok, return the new token and user data
 		return res.status(200).json({
 			token: foundUser.generateJWT(),
 			user: {
