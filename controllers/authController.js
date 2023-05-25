@@ -29,7 +29,7 @@ const registerUser = async (req, res) => {
 	// Register user and customer
 	try {
 		const existingUser = await User.findOne({ nickname });
-		const existingCustomer = await Customer.findOne({ cif: customerCif });
+		const existingCustomer = await Customer.findOne({ customerCif });
 
 		// Checking if trying to register an already existing User and Customer
 		if (existingUser) {
@@ -37,7 +37,7 @@ const registerUser = async (req, res) => {
 				.status(400)
 				.json({ error: { nickname: 'Nickname already registered' } });
 		} else if (existingCustomer) {
-			return res.status(400).json({ error: { cif: 'CIF already registered' } });
+			return res.status(400).json({ error: { customerCif: 'CIF already registered' } });
 		} else {
 			// No duplicated user nor customer
 			// Register Customer
