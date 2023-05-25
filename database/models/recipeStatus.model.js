@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const recipeSatusSchema = new Schema(
+const RecipeSatusSchema = new Schema(
 	{
 		status: { type: String, required: true },
 		deletedAt: { type: Date },
@@ -13,4 +13,4 @@ const recipeSatusSchema = new Schema(
 
 //TODO: CreatedBy, ModifiedBy
 
-module.exports = mongoose.model('RecipeStatus', recipeSatusSchema);
+module.exports = mongoose.model('RecipeStatus', RecipeSatusSchema);

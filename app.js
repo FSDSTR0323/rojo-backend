@@ -10,7 +10,6 @@ require('dotenv').config();
 
 const indexRouter = require('./routes');
 
-
 // app and middleware setup
 const app = express();
 

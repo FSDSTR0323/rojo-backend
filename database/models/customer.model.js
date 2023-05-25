@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const customerSchema = new Schema(
+const CustomerSchema = new Schema(
 	{
 		name: { type: String, required: true },
 		address: { type: String }, // TODO: Add required when needed
@@ -16,4 +16,4 @@ const customerSchema = new Schema(
 	}
 );
 
-module.exports = mongoose.model('Customer', customerSchema);
+module.exports = mongoose.model('Customer', CustomerSchema);

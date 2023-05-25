@@ -12,7 +12,6 @@ authRouter.post('/register', async (req, res) => {
 	const { customerName, customerAddress, customerEmail, customerCif } =
 		req.body;
 
-	console.log(req.body);
 	// * Make sure request has the email
 	if (!firstName || !lastName || !nickname || !password || !email) {
 		let errorMessage = '';
@@ -66,7 +65,7 @@ authRouter.post('/register', async (req, res) => {
 					firstName: savedUser.firstName,
 					email: savedUser.email,
 					role: savedUser.role,
-					permissions: savedUser.getPermissions(), //TODO: Depending on the role generate permissions
+					permissions: savedUser.getPermissions(),
 				},
 			});
 		} else {
@@ -82,6 +81,7 @@ authRouter.post('/register', async (req, res) => {
 authRouter.post('/login', async (req, res) => {
 	const { nickname, password } = req.body;
 	// * Validate, email and password were provided in the request
+  // TODO: More concrete error message
 	if (!nickname || !password) {
 		return res
 			.status(400)
@@ -117,28 +117,26 @@ authRouter.post('/login', async (req, res) => {
 });
 
 const jwtMiddleware = (req, res, next) => {
-	// Recogemos el header "Authorization". Sabemos que viene en formato "Bearer XXXXX...",
-	// así que nos quedamos solo con el token y obviamos "Bearer "
+	// Collect header "Authentication", whichc comes in the form of "Bearer XXXXX...", so we keep the token and discard "Bearer"
 	const authHeader = req.headers['authorization'];
 
 	if (!authHeader)
 		return res.status(401).json({ error: 'Unauthorized MISSING HEADER' });
 	const token = authHeader.split(' ')[1];
-	// Si no hubiera token, respondemos con un 401
+	
 	if (!token)
 		return res.status(401).json({ error: 'Unauthorized and missing token' });
 
 	let tokenPayload;
-
 	try {
-		// Si la función verify() funciona, devolverá el payload del token
+		// If verify() works, it will return the token payload 
 		tokenPayload = jwt.verify(token, jwtSecret);
 	} catch (error) {
-		// Si falla, será porque el token es inválido, por lo que devolvemo error 401
+		// If it fails, will be because of an invalid token, so we return 401
 		return res.status(401).json({ error: 'Unauthorized' });
 	}
 
-	// Guardamos los datos del token dentro de req.jwtPayload, para que esté accesible en los próximos objetos req
+	// Store the token data inside req.jwtPayload, so it is accessible in the following req objects when calling next
 	req.jwtPayload = tokenPayload;
 	next();
 };
