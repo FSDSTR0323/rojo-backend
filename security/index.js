@@ -1,26 +1,14 @@
 const express = require('express');
 const { User, Customer } = require('../database/');
-
+const checkRequiredProperties = require('../utils/checkRequiredProperties');
 const authRouter = express.Router();
-
-const checkRequiredProperties = (req, requiredProps) => {
-	const missingProperties = requiredProps.filter((prop) => !req.body[prop]);
-
-	let errorMessage = '';
-
-	if (missingProperties.length > 0) {
-		errorMessage = `${missingProperties.join(', ')} not received`;
-	}
-
-	return errorMessage;
-};
 
 authRouter.post('/register', async (req, res) => {
 	const { firstName, lastName, nickname, password, email } = req.body;
 	const { customerName, customerAddress, customerEmail, customerCif } =
 		req.body;
 
-	// Check required parameters for users and customer
+	// Check required parameters for User and Customer
 	const requiredProperties = [
 		'firstName',
 		'lastName',
@@ -33,13 +21,12 @@ authRouter.post('/register', async (req, res) => {
 		'customerCif',
 	];
 	const errorMessage = checkRequiredProperties(req, requiredProperties);
-
 	if (errorMessage) {
 		return res.status(400).json({ error: { register: errorMessage } });
 	}
 
 	// TODO: Try - catch
-	const existingUser = await User.findOne({ nickname: nickname });
+	const existingUser = await User.findOne({ nickname });
 	const existingCustomer = await Customer.findOne({ cif: customerCif });
 	// if the user is found, return an error because there is already a user registered
 	if (existingUser) {
@@ -91,13 +78,14 @@ authRouter.post('/register', async (req, res) => {
 
 authRouter.post('/login', async (req, res) => {
 	const { nickname, password } = req.body;
-	// validate, email and password were provided in the request
-	// TODO: More concrete error message
-	if (!nickname || !password) {
-		return res
-			.status(400)
-			.json({ error: { login: 'Missing email or password' } });
+	
+	// Check required parameters for User login
+	const requiredProperties = ['nickname', 'password'];
+	const errorMessage = checkRequiredProperties(req, requiredProperties);
+	if (errorMessage) {
+		return res.status(400).json({ error: { login: errorMessage } });
 	}
+
 	try {
 		const foundUser = await User.findOne({ nickname });
 		if (!foundUser) {
@@ -120,7 +108,6 @@ authRouter.post('/login', async (req, res) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
 		return res
 			.status(500)
 			.json({ error: { register: 'Error Login in :(', error: err.message } });
