@@ -1,15 +1,14 @@
-const createError = require('http-errors');
 const express = require('express');
 const mongoose = require('mongoose');
+const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const ignoreFavicon = require('./middleware/ignoreFavicon')
+const ignoreFaviconMiddleware = require('./middleware/ignoreFaviconMiddleware')
 
 require('dotenv').config();
 
 const indexRouter = require('./routes');
-
 
 // app and middleware setup
 const app = express();
@@ -25,6 +24,7 @@ const mongoDB =
 	'/' +
 	process.env.DB_NAME +
 	'?retryWrites=true&w=majority';
+	
 async function main() {
 	await mongoose.connect(mongoDB);
 }
@@ -36,7 +36,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(ignoreFavicon)
+app.use(ignoreFaviconMiddleware)
 
 // routes
 app.use('/', indexRouter);

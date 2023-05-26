@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../database/models/user.model');
-const userController = require('../controllers/UserController.js');
-
-
+const userController = require('../controllers/userController.js');
 
 // GET user by ID
 router.get('/:id?', (req, res, next) => {

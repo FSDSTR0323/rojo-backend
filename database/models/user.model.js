@@ -60,7 +60,6 @@ UserSchema.methods.generateJWT = function () {
 		id: this._id,
 		customerId: this.customerId,
 		role: this.role,
-		//TODO: permissions
 	};
 	// * This method is from the json-web-token library (who is in charge to generate the JWT
 	return jwt.sign(payload, secret, {

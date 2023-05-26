@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const haccpSchema = new Schema(
+const HaccpSchema = new Schema(
 	{
 		name: { type: String, required: true },
 		deletedAt: { type: Date },
@@ -11,4 +11,4 @@ const haccpSchema = new Schema(
 	}
 );
 
-module.exports = mongoose.model('Haccp', haccpSchema);
+module.exports = mongoose.model('Haccp', HaccpSchema);

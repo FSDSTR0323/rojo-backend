@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const preparationSchema = new Schema(
+const PreparationSchema = new Schema(
 	{
 		user: [{ type: Schema.Types.ObjectId, ref: 'user' }],
 		recipe: [{ type: Schema.Types.ObjectId, ref: 'recipe' }],
@@ -16,4 +16,4 @@ const preparationSchema = new Schema(
 	}
 );
 
-module.exports = mongoose.model('Preparation', preparationSchema);
+module.exports = mongoose.model('Preparation', PreparationSchema);
