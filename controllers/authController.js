@@ -49,7 +49,9 @@ const registerUser = async (req, res) => {
 			});
 			const savedCustomer = await newCustomer.save();
 
-			//Register user
+      // TODO: Get the admin role so it can be assigned
+
+			// Register User
 			const newUser = new User({
 				customerId: savedCustomer._id,
 				firstName,
