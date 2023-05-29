@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const checkRequiredProperties = require('../utils/checkRequiredProperties');
-const { User, Customer } = require('../database/');
+const checkRequiredProperties = require('../utils/helperFunctions/checkRequiredProperties');
+const { ROLES } = require('../utils/constants/roles');
+const { User, Customer, Role } = require('../database/');
 
 const registerUser = async (req, res) => {
 	const { firstName, lastName, nickname, password, email } = req.body;
@@ -30,6 +31,9 @@ const registerUser = async (req, res) => {
 	try {
 		const existingUser = await User.findOne({ nickname });
 		const existingCustomer = await Customer.findOne({ customerCif });
+		const role = await Role.findOne({ name: ROLES.OWNER })
+			.populate('permissions')
+			.exec(); // TODO: Change the type of role if a new user is registered or if this function is refactored (to be passed via params)
 
 		// Checking if trying to register an already existing User and Customer
 		if (existingUser) {
@@ -37,7 +41,9 @@ const registerUser = async (req, res) => {
 				.status(400)
 				.json({ error: { nickname: 'Nickname already registered' } });
 		} else if (existingCustomer) {
-			return res.status(400).json({ error: { customerCif: 'CIF already registered' } });
+			return res
+				.status(400)
+				.json({ error: { customerCif: 'CIF already registered' } });
 		} else {
 			// No duplicated user nor customer
 			// Register Customer
@@ -49,8 +55,6 @@ const registerUser = async (req, res) => {
 			});
 			const savedCustomer = await newCustomer.save();
 
-      // TODO: Get the admin role so it can be assigned
-
 			// Register User
 			const newUser = new User({
 				customerId: savedCustomer._id,
@@ -59,17 +63,18 @@ const registerUser = async (req, res) => {
 				nickname,
 				password,
 				email,
-				role: 1,
+				role,
 			});
+
 			const savedUser = await newUser.save();
 			if (savedUser) {
 				return res.status(201).json({
 					token: savedUser.generateJWT(),
 					user: {
 						firstName: savedUser.firstName,
+						lastName: foundUser.lastName,
 						email: savedUser.email,
 						role: savedUser.role,
-						permissions: savedUser.getPermissions(),
 					},
 				});
 			} else {
@@ -98,10 +103,14 @@ const login = async (req, res) => {
 	try {
 		// check for duplicate user
 		const foundUser = await User.findOne({ nickname });
+		const foundRole = await Role.findById(foundUser.role)
+			.populate('permissions')
+			.exec();
+
 		if (!foundUser) {
 			return res
 				.status(400)
-				.json({ error: { nickname: 'User not found, please Register' } });
+				.json({ error: { nickname: 'User not found, please register' } });
 		}
 		// validate password with bcrypt library
 		if (!foundUser.comparePassword(password)) {
@@ -112,9 +121,9 @@ const login = async (req, res) => {
 			token: foundUser.generateJWT(),
 			user: {
 				firstName: foundUser.firstName,
+				lastName: foundUser.lastName,
 				email: foundUser.email,
-				role: foundUser.role,
-				permissions: foundUser.getPermissions(),
+				role: foundRole,
 			},
 		});
 	} catch (err) {
