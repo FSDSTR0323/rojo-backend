@@ -72,7 +72,7 @@ const registerUser = async (req, res) => {
 					token: savedUser.generateJWT(),
 					user: {
 						firstName: savedUser.firstName,
-						lastName: foundUser.lastName,
+						lastName: savedUser.lastName,
 						email: savedUser.email,
 						role: savedUser.role,
 					},
