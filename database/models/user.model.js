@@ -16,7 +16,10 @@ const UserSchema = new Schema(
 		nickname: { type: String, required: true, unique: true },
 		password: { type: String, required: true },
 		email: { type: String },
-		role: { type: Number },
+		role: {
+			type: Schema.Types.ObjectId,
+			ref: 'Role',
+		},
 		deletedAt: { type: Date },
 		createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
 		modifiedBy: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -29,17 +32,17 @@ const UserSchema = new Schema(
 UserSchema.pre('save', function (next) {
 	const user = this;
 
-	//si no se ha cambiado la contraseña, seguimos
+	// if structure is unchanged, continue
 	if (!user.isModified('password')) return next();
 
-	//brcypt es una libreria que genera "hashes", encriptamos la contraseña
+	// bcrypt is a lib to generate "hashes" to encrypt the password
 	bcrypt.genSalt(10, function (err, salt) {
 		if (err) return next(err);
 
 		bcrypt.hash(user.password, salt, function (err, hash) {
 			if (err) return next(err);
 
-			// si no ha habido error en el encryptado, guardamos
+			// if no error with the encryption, override password
 			user.password = hash;
 			next();
 		});
@@ -61,15 +64,10 @@ UserSchema.methods.generateJWT = function () {
 		customerId: this.customerId,
 		role: this.role,
 	};
-	// * This method is from the json-web-token library (who is in charge to generate the JWT
+	// method from the json-web-token library (who is in charge to generate the JWT)
 	return jwt.sign(payload, secret, {
 		expiresIn: parseInt(expirationDate.getTime() / 1000, 10),
 	});
-};
-
-UserSchema.methods.getPermissions = () => {
-	// TODO: Define permissions per role via an enum
-	if (this.role === 1) return ['admin'];
 };
 
 module.exports = mongoose.model('User', UserSchema);
