@@ -5,8 +5,8 @@ const CustomerSchema = new Schema(
 	{
 		customerName: { type: String, required: true },
 		customerAddress: { type: String }, // TODO: Add required when needed
-		customerEmail: { type: String, required: true }, // Will be the same as the owner's
-		customerCif: { type: String, required: true, unique: true }, // TODO: Add required when needed
+		customerEmail: { type: String, required: true, unique: true }, //TODO: Validate email format
+		customerCif: { type: String, required: true, unique: true },
 		// TODO: Add IBAN
 		//TODO: Add phone when needed
 		deletedAt: { type: Date },
