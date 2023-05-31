@@ -1,9 +1,9 @@
 const ignoreFaviconMiddleware = (req, res, next) => {
-	if (req.originalUrl && req.originalUrl.split('/').pop() === 'favicon.ico') {
-		return res.sendStatus(204);
-	}
+  if (req.originalUrl && req.originalUrl.split('/').pop() === 'favicon.ico') {
+    return res.sendStatus(204);
+  }
 
-	next();
+  next();
 };
 
 module.exports = ignoreFaviconMiddleware;
