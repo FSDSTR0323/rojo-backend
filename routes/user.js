@@ -6,11 +6,11 @@ const userController = require('../controllers/userController.js');
 // GET user by ID
 router.get('/:id?', (req, res, next) => {
   User.find({})
-    .then(userDoc => {
+    .then((userDoc) => {
       console.log(userDoc);
       res.send('user OK');
     })
-    .catch(error => {
+    .catch((error) => {
       res.status(500).json({ error: error.message });
     });
 });
@@ -27,9 +27,5 @@ router.delete('/:id', userController.deleteUser);
 // DELETE (soft)
 
 router.delete('/:id/softdelete', userController.softdeleteUser);
-
-
-
-
 
 module.exports = router;
