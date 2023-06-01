@@ -7,93 +7,79 @@ const { ROLES } = require('../utils/constants/roles');
 const { User, Customer, Role } = require('../database/');
 
 // Verify user by nickname or email, if it doesn't exists create new one
-
-
-
-const register = async (req, res) => {
-  const { firstName, lastName, nickname, password, email } = req.body;
+const registerCustomer = async (req) => {
   const { customerName, customerAddress, customerEmail, customerCif } =
     req.body;
 
-  // Check required parameters for User and Customer
+  // Check required parameters for Customer
   const requiredProperties = [
-    'firstName',
-    'lastName',
-    'nickname',
-    'password',
-    'email',
     'customerName',
     'customerAddress',
     'customerEmail',
     'customerCif',
   ];
   const errorMessage = checkRequiredProperties(req, requiredProperties);
-  if (errorMessage) {
-    return res.status(400).json({ error: { register: errorMessage } });
-  }
+  if (errorMessage) return { error: { status: 400, message: errorMessage } };
 
-  // Register user and customer
-  try {
-    const existingUser = await User.findOne({ nickname });
-    const existingCustomer = await Customer.findOne({ customerCif });
-    const role = await Role.findOne({ name: ROLES.OWNER })
-      .populate('permissions')
-      .exec(); // TODO: Change the type of role if a new user is registered or if this function is refactored (to be passed via params)
+  const existingCustomer = await Customer.findOne({ customerCif });
+  if (existingCustomer)
+    return { error: { status: 400, message: 'CIF already registered' } };
 
-    // Checking if trying to register an already existing User and Customer
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ error: { nickname: 'Nickname already registered' } });
-    } else if (existingCustomer) {
-      return res
-        .status(400)
-        .json({ error: { customerCif: 'CIF already registered' } });
-    } else {
-      // No duplicated user nor customer
-      // Register Customer
-      const newCustomer = new Customer({
-        customerName,
-        customerAddress,
-        customerEmail,
-        customerCif,
-      });
-      const savedCustomer = await newCustomer.save();
-
-      // Register User
-      const newUser = new User({
-        customerId: savedCustomer._id,
-        firstName,
-        lastName,
-        nickname,
-        password,
-        email,
-        role,
-      });
-
-      const savedUser = await newUser.save();
-      if (savedUser) {
-        return res.status(201).json({
-          token: savedUser.generateJWT(),
-          user: {
-            firstName: savedUser.firstName,
-            lastName: savedUser.lastName,
-            email: savedUser.email,
-            role: savedUser.role,
-          },
-        });
-      } else {
-        return res
-          .status(500)
-          .json({ error: { firstName: 'Error creating new User :(', err } });
-      }
-    }
-  } catch (err) {
-    return res.status(500).json({
-      error: { register: 'Error Registering user', error: err.message },
-    });
-  }
+  // Save Customer
+  const newCustomer = new Customer({
+    customerName,
+    customerAddress,
+    customerEmail,
+    customerCif,
+  });
+  const savedCustomer = await newCustomer.save();
+  return savedCustomer
+    ? savedCustomer
+    : { error: { status: 500, message: 'Error saving new Customer' } };
 };
+
+const registerUser = async (req, customerId) => {
+  const { firstName, lastName, nickname, password, email, role } = req.body;
+
+  // Check required parameters for User
+  const requiredProperties = [
+    'firstName',
+    'lastName',
+    'nickname',
+    'password',
+    'email',
+    'role',
+  ];
+  const errorMessage = checkRequiredProperties(req, requiredProperties);
+  if (errorMessage) return { error: { status: 400, message: errorMessage } };
+
+  const existingUser = await User.findOne({ nickname });
+  const existingRole = await Role.findOne({ name: role })
+    .populate('permissions')
+    .exec(); // TODO: Change the type of role if a new user is registered or if this function is refactored (to be passed via params)
+
+  if (existingUser)
+    return { error: { status: 400, message: 'Nickname already registered' } };
+  if (!existingRole)
+    return { error: { status: 400, message: 'Invalid user role' } };
+
+  // Save user
+  const newUser = new User({
+    customerId,
+    firstName,
+    lastName,
+    nickname,
+    password,
+    email,
+    role,
+  });
+  const savedUser = await newUser.save();
+  return savedUser
+    ? savedUser
+    : { error: { status: 500, message: 'Error saving new User' } };
+};
+
+const register = async (req, res) => {};
 
 const login = async (req, res) => {
   const { nickname, password } = req.body;
@@ -120,9 +106,9 @@ const login = async (req, res) => {
 
     // check for existing role
     const foundRole = await Role.findById(foundUser.role)
-    .populate('permissions')
-    .exec();
-    if(!foundRole) {
+      .populate('permissions')
+      .exec();
+    if (!foundRole) {
       return res
         .status(400)
         .json({ error: { role: 'Role not found, please enter a valid one' } });
@@ -144,8 +130,6 @@ const login = async (req, res) => {
       .json({ error: { register: 'Error Logging in', error: err.message } });
   }
 };
-
-
 
 // const createUser = async (req, res) => {
 //   try {
