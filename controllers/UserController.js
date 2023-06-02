@@ -53,13 +53,13 @@ const registerUser = async (req, customerId) => {
 
   const existingUser = await User.findOne({ nickname });
   const existingCustomer = await Customer.findById(customerId);
-  const roleId = await Role.findOne({ name: role })._id;
+  const existingRole= await Role.findOne({ name: role });
 
   if (existingUser)
     return { error: { status: 400, message: 'Nickname already registered' } };
   if (!existingCustomer)
     return { error: { status: 404, message: 'CustomerId not found' } };
-  if (!roleId)
+  if (!existingRole)
     return { error: { status: 400, message: 'Invalid user role' } };
 
   // Save user
@@ -70,7 +70,7 @@ const registerUser = async (req, customerId) => {
     nickname,
     password,
     email,
-    role: roleId,
+    role: existingRole._id,
   });
   const savedUser = await newUser.save();
   return savedUser
@@ -80,6 +80,7 @@ const registerUser = async (req, customerId) => {
 
 const registerCustomerAndUser = async (req, res) => {
   try {
+    //TODO: Use sessions and transactions
     const savedCustomer = await registerCustomer(req);
     const savedUser = await registerUser(req, savedCustomer._id);
 
