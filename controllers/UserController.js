@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-
 const checkRequiredProperties = require('../utils/helperFunctions/checkRequiredProperties');
-const { ROLES } = require('../utils/constants/roles');
 const { User, Customer, Role } = require('../database/');
 
 // Verify user by nickname or email, if it doesn't exists create new one
@@ -54,13 +52,14 @@ const registerUser = async (req, customerId) => {
   if (errorMessage) return { error: { status: 400, message: errorMessage } };
 
   const existingUser = await User.findOne({ nickname });
-  const existingRole = await Role.findOne({ name: role })
-    .populate('permissions')
-    .exec(); // TODO: Change the type of role if a new user is registered or if this function is refactored (to be passed via params)
+  const existingCustomer = await Customer.findById(customerId);
+  const roleId = await Role.findOne({ name: role })._id;
 
   if (existingUser)
     return { error: { status: 400, message: 'Nickname already registered' } };
-  if (!existingRole)
+  if (!existingCustomer)
+    return { error: { status: 404, message: 'CustomerId not found' } };
+  if (!roleId)
     return { error: { status: 400, message: 'Invalid user role' } };
 
   // Save user
@@ -71,7 +70,7 @@ const registerUser = async (req, customerId) => {
     nickname,
     password,
     email,
-    role,
+    role: roleId,
   });
   const savedUser = await newUser.save();
   return savedUser
@@ -79,7 +78,37 @@ const registerUser = async (req, customerId) => {
     : { error: { status: 500, message: 'Error saving new User' } };
 };
 
-const register = async (req, res) => {};
+const registerCustomerAndUser = async (req, res) => {
+  try {
+    const savedCustomer = await registerCustomer(req);
+    const savedUser = await registerUser(req, savedCustomer._id);
+
+    if (savedCustomer.error)
+      return res
+        .status(savedCustomer.error.status)
+        .json({ error: savedCustomer.error.message });
+    if (savedUser.error)
+      return res
+        .status(savedUser.error.status)
+        .json({ error: savedUser.error.message });
+
+    if (savedUser) {
+      return res.status(201).json({
+        token: savedUser.generateJWT(),
+        user: {
+          firstName: savedUser.firstName,
+          lastName: savedUser.lastName,
+          email: savedUser.email,
+          role: savedUser.role,
+        },
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      error: { register: 'Error Registering user', error: error.message },
+    });
+  }
+};
 
 const login = async (req, res) => {
   const { nickname, password } = req.body;
@@ -246,6 +275,6 @@ const login = async (req, res) => {
 // };
 
 module.exports = {
-  register,
+  registerCustomerAndUser,
   login,
 };

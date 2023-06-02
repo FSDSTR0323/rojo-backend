@@ -4,7 +4,7 @@ const jwtMiddleware = require('../middleware/jwtMiddleware');
 
 const userController = require('../controllers/userController.js');
 
-router.post('/register', userController.register);
+router.post('/register', userController.registerCustomerAndUser);
 router.post('/login', userController.login);
 
 // GET user by ID
