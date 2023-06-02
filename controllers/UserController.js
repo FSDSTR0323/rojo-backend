@@ -5,7 +5,7 @@ const checkRequiredProperties = require('../utils/helperFunctions/checkRequiredP
 const { User, Customer, Role } = require('../database/');
 
 // Verify user by nickname or email, if it doesn't exists create new one
-const registerCustomer = async (req) => {
+const registerCustomer = async (req, session) => {
   const { customerName, customerAddress, customerEmail, customerCif } =
     req.body;
 
@@ -30,13 +30,13 @@ const registerCustomer = async (req) => {
     customerEmail,
     customerCif,
   });
-  const savedCustomer = await newCustomer.save();
+  const savedCustomer = await newCustomer.save({ session });
   return savedCustomer
     ? savedCustomer
     : { error: { status: 500, message: 'Error saving new Customer' } };
 };
 
-const registerUser = async (req, customerId) => {
+const registerUser = async (req, customerId, session) => {
   const { firstName, lastName, nickname, password, email, role } = req.body;
 
   // Check required parameters for User
@@ -51,9 +51,9 @@ const registerUser = async (req, customerId) => {
   const errorMessage = checkRequiredProperties(req, requiredProperties);
   if (errorMessage) return { error: { status: 400, message: errorMessage } };
 
-  const existingUser = await User.findOne({ nickname });
-  const existingCustomer = await Customer.findById(customerId);
-  const existingRole= await Role.findOne({ name: role });
+  const existingUser = await User.findOne({ nickname }).session(session);
+  const existingCustomer = await Customer.findById(customerId).session(session);
+  const existingRole = await Role.findOne({ name: role });
 
   if (existingUser)
     return { error: { status: 400, message: 'Nickname already registered' } };
@@ -72,26 +72,41 @@ const registerUser = async (req, customerId) => {
     email,
     role: existingRole._id,
   });
-  const savedUser = await newUser.save();
+  const savedUser = await newUser.save({ session });
   return savedUser
     ? savedUser
     : { error: { status: 500, message: 'Error saving new User' } };
 };
 
 const registerCustomerAndUser = async (req, res) => {
-  try {
-    //TODO: Use sessions and transactions
-    const savedCustomer = await registerCustomer(req);
-    const savedUser = await registerUser(req, savedCustomer._id);
+  const session = await mongoose.startSession(); // using sessions to make sure we only save a customer if a user is valid
 
-    if (savedCustomer.error)
-      return res
-        .status(savedCustomer.error.status)
-        .json({ error: savedCustomer.error.message });
-    if (savedUser.error)
-      return res
-        .status(savedUser.error.status)
-        .json({ error: savedUser.error.message });
+  try {
+    session.startTransaction();
+
+    const savedCustomer = await registerCustomer(req, session);
+
+    console.log(savedCustomer._id);
+
+    const savedUser = await registerUser(req, savedCustomer.id, session);
+
+    // Close session and don't store anything if there's any error in either User or Customer
+    if (savedCustomer.error || savedUser.error) {
+      await session.abortTransaction();
+      session.endSession();
+
+      if (savedCustomer.error)
+        return res
+          .status(savedCustomer.error.status)
+          .json({ error: savedCustomer.error.message });
+      if (savedUser.error)
+        return res
+          .status(savedUser.error.status)
+          .json({ error: savedUser.error.message });
+    }
+
+    await session.commitTransaction();
+    session.endSession();
 
     if (savedUser) {
       return res.status(201).json({
@@ -105,6 +120,9 @@ const registerCustomerAndUser = async (req, res) => {
       });
     }
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
     return res.status(500).json({
       error: { register: 'Error Registering user', error: error.message },
     });
