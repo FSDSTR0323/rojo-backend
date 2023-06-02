@@ -16,9 +16,10 @@ const UserSchema = new Schema(
     nickname: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     email: { type: String, unique: true }, //TODO: Validate email format
-    role: {
+    roleId: {
       type: Schema.Types.ObjectId,
       ref: 'Role',
+      required: true,
     },
     deletedAt: { type: Date },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },

@@ -12,7 +12,6 @@ const registerCustomer = async (req, session) => {
   // Check required parameters for Customer
   const requiredProperties = [
     'customerName',
-    'customerAddress',
     'customerEmail',
     'customerCif',
   ];
@@ -70,7 +69,7 @@ const registerUser = async (req, customerId, session) => {
     nickname,
     password,
     email,
-    role: existingRole._id,
+    roleId: existingRole._id,
   });
   const savedUser = await newUser.save({ session });
   return savedUser
@@ -85,8 +84,6 @@ const registerCustomerAndUser = async (req, res) => {
     session.startTransaction();
 
     const savedCustomer = await registerCustomer(req, session);
-
-    console.log(savedCustomer._id);
 
     const savedUser = await registerUser(req, savedCustomer.id, session);
 
@@ -115,7 +112,7 @@ const registerCustomerAndUser = async (req, res) => {
           firstName: savedUser.firstName,
           lastName: savedUser.lastName,
           email: savedUser.email,
-          role: savedUser.role,
+          roleId: savedUser.roleId,
         },
       });
     }
