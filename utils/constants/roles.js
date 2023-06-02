@@ -1,7 +1,7 @@
 const ROLES = {
-  OWNER: 'Owner',
-  HEAD: 'Head Chef',
-  CHEF: 'Chef',
+  OWNER: 'owner',
+  HEAD: 'headChef',
+  CHEF: 'chef',
 };
 
 module.exports = { ROLES };
