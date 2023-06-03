@@ -104,12 +104,6 @@ const registerCustomerAndUser = async (req, res) => {
     if (savedUser) {
       return res.status(201).json({
         token: savedUser.generateJWT(),
-        user: {
-          firstName: savedUser.firstName,
-          lastName: savedUser.lastName,
-          email: savedUser.email,
-          roleId: savedUser.roleId,
-        },
       });
     }
   } catch (error) {
@@ -151,32 +145,43 @@ const login = async (req, res) => {
       .exec();
     if (!foundRole) {
       return res
-        .status(400)
+        .status(404)
         .json({ error: { role: 'Role not found, please enter a valid one' } });
     }
 
     // if everything is ok, return the new token and user data
     return res.status(200).json({
       token: foundUser.generateJWT(),
-      user: {
-        firstName: foundUser.firstName,
-        lastName: foundUser.lastName,
-        email: foundUser.email,
-        role: foundRole,
-      },
     });
-  } catch (err) {
+  } catch (error) {
     return res
       .status(500)
-      .json({ error: { register: 'Error Logging in', error: err.message } });
+      .json({ error: { register: 'Error Logging in', error: error.message } });
   }
 };
 
 const getCurrentUserInfo = async (req, res) => {
-  const tokenPayload = req.jwtPayload;
+  const { id, customerId } = req.jwtPayload;
 
+  const foundUser = await User.findOne({ _id: id, customerId }).populate({
+    path: 'roleId',
+    populate: {
+      path: 'permissions',
+    },
+  });
 
-  return res.status(200).json(tokenPayload);
+  if (!foundUser)
+    return res.status(404).json({ error: { id: 'User not found' } });
+
+  const userInfo = {
+    customerId: foundUser.customerId,
+    nickname: foundUser.nickname,
+    email: foundUser.email,
+    role: foundUser.roleId.name,
+    permissions: foundUser.roleId.permissions.map(permission => permission.code),
+  };
+
+  return res.status(200).json(userInfo);
 };
 
 // const createUser = async (req, res) => {

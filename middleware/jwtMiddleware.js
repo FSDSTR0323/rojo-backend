@@ -12,8 +12,6 @@ const jwtMiddleware = (req, res, next) => {
   if (!token)
     return res.status(401).json({ error: 'Unauthorized and missing token' });
 
-  console.log(jwt.verify(token, jwtSecret))
-
   let tokenPayload;
   try {
     // if verify() works, it will return the token payload
