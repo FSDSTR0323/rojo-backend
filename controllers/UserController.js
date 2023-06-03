@@ -137,7 +137,7 @@ const login = async (req, res) => {
     const foundUser = await User.findOne({ nickname });
     if (!foundUser) {
       return res
-        .status(400)
+        .status(404)
         .json({ error: { nickname: 'User not found, please register' } });
     }
     // validate password with bcrypt library
@@ -149,7 +149,6 @@ const login = async (req, res) => {
     const foundRole = await Role.findById(foundUser.roleId)
       .populate('permissions')
       .exec();
-
     if (!foundRole) {
       return res
         .status(400)
@@ -174,10 +173,10 @@ const login = async (req, res) => {
 };
 
 const getCurrentUserInfo = async (req, res) => {
-  const tokenPayload = req.jwtPayload
-  
-  return res.status(200).json(tokenPayload)
+  const tokenPayload = req.jwtPayload;
 
+
+  return res.status(200).json(tokenPayload);
 };
 
 // const createUser = async (req, res) => {

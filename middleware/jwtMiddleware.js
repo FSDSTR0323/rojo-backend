@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const jwtSecret = process.env.JWT_SECRET;
 
 const jwtMiddleware = (req, res, next) => {
-  // collect header "Authentication", whichc comes in the form of "Bearer XXXXX...", so we keep the token and discard "Bearer"
+  // collect header "Authorization", whichc comes in the form of "Bearer XXXXX...", so we keep the token and discard "Bearer"
   const authHeader = req.headers['authorization'];
 
   if (!authHeader)
@@ -11,6 +11,8 @@ const jwtMiddleware = (req, res, next) => {
 
   if (!token)
     return res.status(401).json({ error: 'Unauthorized and missing token' });
+
+  console.log(jwt.verify(token, jwtSecret))
 
   let tokenPayload;
   try {
