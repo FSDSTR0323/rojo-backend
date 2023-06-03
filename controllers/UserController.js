@@ -162,52 +162,65 @@ const login = async (req, res) => {
 
 const getCurrentUserInfo = async (req, res) => {
   const { id, customerId } = req.jwtPayload;
+  try {
+    const foundUser = await User.findOne({ _id: id, customerId }).populate({
+      path: 'roleId',
+      populate: {
+        path: 'permissions',
+      },
+    });
 
-  const foundUser = await User.findOne({ _id: id, customerId }).populate({
-    path: 'roleId',
-    populate: {
-      path: 'permissions',
-    },
-  });
+    if (!foundUser)
+      return res.status(404).json({ error: { id: 'User not found' } });
 
-  if (!foundUser)
-    return res.status(404).json({ error: { id: 'User not found' } });
-
-  const userInfo = {
-    nickname: foundUser.nickname,
-    email: foundUser.email,
-    role: foundUser.roleId.name,
-    permissions: foundUser.roleId.permissions.map(
-      (permission) => permission.code
-    ),
-  };
-
-  return res.status(200).json(userInfo);
+    const userInfo = {
+      nickname: foundUser.nickname,
+      email: foundUser.email,
+      role: foundUser.roleId.name,
+      permissions: foundUser.roleId.permissions.map(
+        (permission) => permission.code
+      ),
+    };
+    return res.status(200).json(userInfo);
+  } catch (error) {
+    return res.status(500).json({
+      error: { userInfo: 'Error getting user info', error: error.message },
+    });
+  }
 };
 
 const getCustomerUsers = async (req, res) => {
   const { customerId } = req.jwtPayload;
 
-  const foundUsers = await User.find({ customerId });
+  try {
+    const foundUsers = await User.find({ customerId });
 
-  if (!foundUsers)
-    return res.status(404).json({
-      error: { customerId: 'Invalid customerId or no users with given id' },
+    if (!foundUsers)
+      return res.status(404).json({
+        error: { customerId: 'Invalid customerId or no users with given id' },
+      });
+
+    const userList = foundUsers.map((user) => {
+      return {
+        _id: user._id,
+        customerId: user.customerId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        nickname: user.nickname,
+        email: user.email,
+        roleId: user.roleId,
+      };
     });
 
-  const userList = foundUsers.map((user) => {
-    return {
-      _id: user._id,
-      customerId: user.customerId,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      nickname: user.nickname,
-      email: user.email,
-      roleId: user.roleId
-    };
-  });
-
-  return res.status(200).json(userList);
+    return res.status(200).json(userList);
+  } catch (error) {
+    return res.status(500).json({
+      error: {
+        getUserList: 'Error getting user list from customer',
+        error: error.message,
+      },
+    });
+  }
 };
 
 const addUserInExistingCustomer = async (req, res) => {};

@@ -1,8 +1,8 @@
 # FOOD INFORMER API
 
-API to manage the FOOD Informer endpoints and interaction with its related frontend. 
+API to manage the FOOD Informer endpoints and interaction with its related frontend.
 
-This API has been designed to be working with MongoDB using a [MongoDB Atlas](https://www.mongodb.com/atlas/database) account. 
+This API has been designed to be working with MongoDB using a [MongoDB Atlas](https://www.mongodb.com/atlas/database) account.
 
 Make sure you create an account and set up a new database before continuing through this documentation. Any username and password described here are related to the MongoDB cluster's password.
 
@@ -53,17 +53,17 @@ POST /user/register
 
 ##### Body Parameters
 
-| Parameter | Type | Required | Description | Example |
-|-----------|------|----------|-------------|---------|
-| firstName | String | True | User's first name | "John" |
-| lastName | String | True | User's last name | "Smith" |
-| nickname | String |  True | User's nickname | "johnsmith923" |
-| password | String | True | User's password | "1234abc" |
-| role | String | True | User's role within the app | ("owner", "headchef", "chef") |
-| customerName | String | True | Customer's company name | "Chez Florian" |
-| customerAddress | String | True | Customer's company address | "24, Spaghetti road, 08025, Barcelona" |
-| customerEmail | String | True | Customer's company email. This email will be used as the user's email as well | "chezflorian@gmail.com" |
-| customerCif | String | True | Customer's company CIF Number | "123456789" |
+| Parameter       | Type   | Required | Description                                                                   | Example                                |
+| --------------- | ------ | -------- | ----------------------------------------------------------------------------- | -------------------------------------- |
+| firstName       | String | True     |  User's first name                                                            | "John"                                 |
+| lastName        | String | True     | User's last name                                                              | "Smith"                                |
+| nickname        | String | True     | User's nickname                                                               | "johnsmith923"                         |
+| password        | String | True     | User's password                                                               | "1234abc"                              |
+| role            | String | True     | User's role within the app                                                    | ("owner", "headchef", "chef")          |
+| customerName    | String | True     | Customer's company name                                                       | "Chez Florian"                         |
+| customerAddress | String | True     | Customer's company address                                                    | "24, Spaghetti road, 08025, Barcelona" |
+| customerEmail   | String | True     | Customer's company email. This email will be used as the user's email as well | "chezflorian@gmail.com"                |
+| customerCif     | String | True     | Customer's company CIF Number                                                 | "123456789"                            |
 
 ##### Responses
 
@@ -71,14 +71,13 @@ POST /user/register
 
 ```json
 {
-   "token": "<JWT Token>",
+  "token": "<JWT Token>"
 }
 ```
 
 - 400: Bad request or validation error.
 - 404: Customer ID not found.
 - 500: Internal server error.
-
 
 #### Login
 
@@ -90,11 +89,10 @@ POST /user/login
 
 ##### Body Parameters
 
-| Parameter | Type | Required | Description | Example |
-|-----------|------|----------|-------------|---------|
-| nickname | String |  True | User's nickname | "johnsmith923" |
-| password | String | True | User's password | "1234abc" |
-
+| Parameter | Type   | Required | Description     | Example        |
+| --------- | ------ | -------- | --------------- | -------------- |
+| nickname  | String | True     | User's nickname | "johnsmith923" |
+| password  | String | True     | User's password | "1234abc"      |
 
 ##### Responses
 
@@ -102,14 +100,13 @@ POST /user/login
 
 ```json
 {
-   "token": "<JWT Token>",
+  "token": "<JWT Token>"
 }
 ```
 
 - 400: Bad request or validation error.
 - 404: Customer ID not found.
 - 500: Internal server error.
-
 
 #### Get user data
 
@@ -121,31 +118,27 @@ GET /user/
 
 Requires **authentication** via a valid JWT Token in the Authorization header.
 
-
 ##### Responses
 
 - 200: User found in the database
 
 ```json
 {
-    "nickname": "johnsmith923",
-    "email": "johnsmith923@gmail.com",
-    "role": "owner",
-    "permissions": [
-        "user.create"
-    ]
+  "nickname": "johnsmith923",
+  "email": "johnsmith923@gmail.com",
+  "role": "owner",
+  "permissions": ["user.create"]
 }
 ```
 
-| Parameter | Type | Required | Description | Example |
-|-----------|------|----------|-------------|---------|
-| nickname | String |  True | User's nickname | "johnsmith923" |
-| email | String | True | User email | "johnsmith923@gmail.com" |
-| role | String | True | User's role within the app | ("owner", "headchef", "chef") |
-| permissions | String | True | List of user permissions within the app | ['user.create', 'dashboard.view'] |
+| Parameter   | Type   | Required | Description                             | Example                           |
+| ----------- | ------ | -------- | --------------------------------------- | --------------------------------- |
+| nickname    | String | True     | User's nickname                         | "johnsmith923"                    |
+| email       | String | True     | User email                              | "johnsmith923@gmail.com"          |
+| role        | String | True     | User's role within the app              | ("owner", "headchef", "chef")     |
+| permissions | String | True     | List of user permissions within the app | ['user.create', 'dashboard.view'] |
 
 - 404: Customer not found.
 - 500: Internal server error.
 
-
-//TODO: Document missing API calls ('/list')
+//TODO: Document missing API calls (GET '/list', POST '/')
