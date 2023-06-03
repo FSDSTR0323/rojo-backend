@@ -146,3 +146,6 @@ Requires **authentication** via a valid JWT Token in the Authorization header.
 
 - 404: Customer not found.
 - 500: Internal server error.
+
+
+//TODO: Document missing API calls ('/list')

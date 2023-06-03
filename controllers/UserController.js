@@ -177,10 +177,27 @@ const getCurrentUserInfo = async (req, res) => {
     nickname: foundUser.nickname,
     email: foundUser.email,
     role: foundUser.roleId.name,
-    permissions: foundUser.roleId.permissions.map(permission => permission.code),
+    permissions: foundUser.roleId.permissions.map(
+      (permission) => permission.code
+    ),
   };
 
   return res.status(200).json(userInfo);
+};
+
+const getCustomerUsers = async (req, res) => {
+  const { customerId } = req.jwtPayload;
+
+  const foundUsers = await User.find({ customerId });
+
+  if (!foundUsers)
+    return res
+      .status(404)
+      .json({
+        error: { customerId: 'Invalid customerId or no users with given id' },
+      });
+
+  return res.status(200).json(foundUsers);
 };
 
 // const createUser = async (req, res) => {
@@ -301,4 +318,5 @@ module.exports = {
   registerCustomerAndUser,
   login,
   getCurrentUserInfo,
+  getCustomerUsers,
 };

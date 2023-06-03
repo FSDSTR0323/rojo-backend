@@ -6,19 +6,9 @@ const userController = require('../controllers/userController.js');
 
 router.post('/register', userController.registerCustomerAndUser);
 router.post('/login', userController.login);
-router.get('/', jwtMiddleware, userController.getCurrentUserInfo)
+router.get('/', jwtMiddleware, userController.getCurrentUserInfo);
+router.get('/list', jwtMiddleware, userController.getCustomerUsers)
 
-// GET user by ID
-// router.get('/:id?', (req, res, next) => {
-//   User.find({})
-//     .then((userDoc) => {
-//       console.log(userDoc);
-//       res.send('user OK');
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ error: error.message });
-//     });
-// });
 
 // // POST create a new user if doesn't exists
 // router.post('/', userController.createUser);
