@@ -7,11 +7,8 @@ const userController = require('../controllers/userController.js');
 router.post('/register', userController.registerCustomerAndUser);
 router.post('/login', userController.login);
 router.get('/', jwtMiddleware, userController.getCurrentUserInfo);
-router.get('/list', jwtMiddleware, userController.getCustomerUsers)
-
-
-// // POST create a new user if doesn't exists
-// router.post('/', userController.createUser);
+router.get('/list', jwtMiddleware, userController.getCustomerUsers);
+router.post('/', jwtMiddleware, userController.addUserInExistingCustomer);
 
 // // PUT update user by ID
 // router.put('/:id', userController.updateUser);

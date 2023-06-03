@@ -162,42 +162,120 @@ const login = async (req, res) => {
 
 const getCurrentUserInfo = async (req, res) => {
   const { id, customerId } = req.jwtPayload;
+  try {
+    const foundUser = await User.findOne({ _id: id, customerId }).populate({
+      path: 'roleId',
+      populate: {
+        path: 'permissions',
+      },
+    });
 
-  const foundUser = await User.findOne({ _id: id, customerId }).populate({
-    path: 'roleId',
-    populate: {
-      path: 'permissions',
-    },
-  });
+    if (!foundUser)
+      return res.status(404).json({ error: { id: 'User not found' } });
 
-  if (!foundUser)
-    return res.status(404).json({ error: { id: 'User not found' } });
-
-  const userInfo = {
-    nickname: foundUser.nickname,
-    email: foundUser.email,
-    role: foundUser.roleId.name,
-    permissions: foundUser.roleId.permissions.map(
-      (permission) => permission.code
-    ),
-  };
-
-  return res.status(200).json(userInfo);
+    const userInfo = {
+      nickname: foundUser.nickname,
+      email: foundUser.email,
+      role: foundUser.roleId.name,
+      permissions: foundUser.roleId.permissions.map(
+        (permission) => permission.code
+      ),
+    };
+    return res.status(200).json(userInfo);
+  } catch (error) {
+    return res.status(500).json({
+      error: { userInfo: 'Error getting user info', error: error.message },
+    });
+  }
 };
 
 const getCustomerUsers = async (req, res) => {
   const { customerId } = req.jwtPayload;
 
-  const foundUsers = await User.find({ customerId });
+  try {
+    const foundUsers = await User.find({ customerId });
 
-  if (!foundUsers)
-    return res
-      .status(404)
-      .json({
+    if (!foundUsers)
+      return res.status(404).json({
         error: { customerId: 'Invalid customerId or no users with given id' },
       });
 
-  return res.status(200).json(foundUsers);
+    const userList = foundUsers.map((user) => {
+      return {
+        _id: user._id,
+        customerId: user.customerId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        nickname: user.nickname,
+        email: user.email,
+        roleId: user.roleId,
+      };
+    });
+
+    return res.status(200).json(userList);
+  } catch (error) {
+    return res.status(500).json({
+      error: {
+        getUserList: 'Error getting user list from customer',
+        error: error.message,
+      },
+    });
+  }
+};
+
+const addUserInExistingCustomer = async (req, res) => {
+  const { customerId, id } = req.jwtPayload;
+  const { firstName, lastName, nickname, password, email, role } = req.body;
+
+  // Check required parameters for User
+  const requiredProperties = [
+    'firstName',
+    'lastName',
+    'nickname',
+    'password',
+    'role',
+  ];
+  const errorMessage = checkRequiredProperties(req, requiredProperties);
+  if (errorMessage)
+    return res.status(400).json({ error: { message: errorMessage } });
+
+  try {
+    const existingUser = await User.findOne({ nickname });
+    if (existingUser)
+      return res.status(400).json({
+        error: {
+          message: 'nickname already registered for the given customerId',
+        },
+      });
+
+    const foundRole = await Role.findOne({ name: role });
+    if (!foundRole)
+      return res.status(400).json({
+        error: {
+          message: 'Invalid user role',
+        },
+      });
+
+    const newUser = new User({
+      customerId,
+      firstName,
+      lastName,
+      nickname,
+      password,
+      email,
+      roleId: foundRole._id,
+      createdBy: id,
+    });
+
+    const savedUser = await newUser.save();
+    return res.status(201).json({
+      token: savedUser.generateJWT(),
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: { message: 'Error adding a new user into customer' } });
+  }
 };
 
 // const createUser = async (req, res) => {
@@ -319,4 +397,5 @@ module.exports = {
   login,
   getCurrentUserInfo,
   getCustomerUsers,
+  addUserInExistingCustomer,
 };
