@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const jwtSecret = process.env.JWT_SECRET;
 
 const jwtMiddleware = (req, res, next) => {
-  // collect header "Authentication", whichc comes in the form of "Bearer XXXXX...", so we keep the token and discard "Bearer"
+  // collect header "Authorization", whichc comes in the form of "Bearer XXXXX...", so we keep the token and discard "Bearer"
   const authHeader = req.headers['authorization'];
 
   if (!authHeader)

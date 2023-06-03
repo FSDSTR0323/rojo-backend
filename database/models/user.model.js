@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const secret = process.env.JWT_TOKEN;
+const jwtSecret = process.env.JWT_SECRET;
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
@@ -63,10 +63,9 @@ UserSchema.methods.generateJWT = function () {
   let payload = {
     id: this._id,
     customerId: this.customerId,
-    role: this.role,
   };
   // method from the json-web-token library (who is in charge to generate the JWT)
-  return jwt.sign(payload, secret, {
+  return jwt.sign(payload, jwtSecret, {
     expiresIn: parseInt(expirationDate.getTime() / 1000, 10),
   });
 };

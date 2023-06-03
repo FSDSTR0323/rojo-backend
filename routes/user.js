@@ -6,6 +6,7 @@ const userController = require('../controllers/userController.js');
 
 router.post('/register', userController.registerCustomerAndUser);
 router.post('/login', userController.login);
+router.get('/', jwtMiddleware, userController.getCurrentUserInfo)
 
 // GET user by ID
 // router.get('/:id?', (req, res, next) => {
