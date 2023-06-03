@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const checkRequiredProperties = require('../utils/helperFunctions/checkRequiredProperties');
 const { User, Customer, Role } = require('../database/');
+const { ROLES } = require('../utils/constants/roles');
 
 // Verify user by nickname or email, if it doesn't exists create new one
 const registerCustomer = async (req, session) => {
@@ -10,11 +11,7 @@ const registerCustomer = async (req, session) => {
     req.body;
 
   // Check required parameters for Customer
-  const requiredProperties = [
-    'customerName',
-    'customerEmail',
-    'customerCif',
-  ];
+  const requiredProperties = ['customerName', 'customerEmail', 'customerCif'];
   const errorMessage = checkRequiredProperties(req, requiredProperties);
   if (errorMessage) return { error: { status: 400, message: errorMessage } };
 
@@ -44,7 +41,6 @@ const registerUser = async (req, customerId, session) => {
     'lastName',
     'nickname',
     'password',
-    'email',
     'role',
   ];
   const errorMessage = checkRequiredProperties(req, requiredProperties);
@@ -68,7 +64,7 @@ const registerUser = async (req, customerId, session) => {
     lastName,
     nickname,
     password,
-    email,
+    email: (role === ROLES.OWNER) ? existingCustomer.customerEmail : email,
     roleId: existingRole._id,
   });
   const savedUser = await newUser.save({ session });
