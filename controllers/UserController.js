@@ -174,7 +174,6 @@ const getCurrentUserInfo = async (req, res) => {
     return res.status(404).json({ error: { id: 'User not found' } });
 
   const userInfo = {
-    customerId: foundUser.customerId,
     nickname: foundUser.nickname,
     email: foundUser.email,
     role: foundUser.roleId.name,

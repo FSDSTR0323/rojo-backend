@@ -113,10 +113,10 @@ POST /user/login
 
 #### Get user data
 
-Allows to get the current user's data
+Allows to get the current user's data, extracting info from a valid JWT Token.
 
 ```bash
-POST /user/me
+POST /user/
 ```
 
 Requires **authentication** via a valid JWT Token in the Authorization header.
@@ -128,10 +128,21 @@ Requires **authentication** via a valid JWT Token in the Authorization header.
 
 ```json
 {
-
+    "nickname": "johnsmith923",
+    "email": "johnsmith923@gmail.com",
+    "role": "owner",
+    "permissions": [
+        "user.create"
+    ]
 }
 ```
 
-- 400: Bad request or validation error.
-- 404: Customer ID not found.
+| Parameter | Type | Required | Description | Example |
+|-----------|------|----------|-------------|---------|
+| nickname | String |  True | User's nickname | "johnsmith923" |
+| email | String | True | User email | "johnsmith923@gmail.com" |
+| role | String | True | User's role within the app | ("owner", "headchef", "chef") |
+| permissions | String | True | List of user permissions within the app | ['user.create', 'dashboard.view'] |
+
+- 404: Customer not found.
 - 500: Internal server error.
