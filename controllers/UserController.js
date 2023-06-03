@@ -223,7 +223,60 @@ const getCustomerUsers = async (req, res) => {
   }
 };
 
-const addUserInExistingCustomer = async (req, res) => {};
+const addUserInExistingCustomer = async (req, res) => {
+  const { customerId, id } = req.jwtPayload;
+  const { firstName, lastName, nickname, password, email, role } = req.body;
+
+  // Check required parameters for User
+  const requiredProperties = [
+    'firstName',
+    'lastName',
+    'nickname',
+    'password',
+    'role',
+  ];
+  const errorMessage = checkRequiredProperties(req, requiredProperties);
+  if (errorMessage)
+    return res.status(400).json({ error: { message: errorMessage } });
+
+  try {
+    const existingUser = await User.findOne({ nickname });
+    if (existingUser)
+      return res.status(400).json({
+        error: {
+          message: 'nickname already registered for the given customerId',
+        },
+      });
+
+    const foundRole = await Role.findOne({ name: role });
+    if (!foundRole)
+      return res.status(400).json({
+        error: {
+          message: 'Invalid user role',
+        },
+      });
+
+    const newUser = new User({
+      customerId,
+      firstName,
+      lastName,
+      nickname,
+      password,
+      email,
+      roleId: foundRole._id,
+      createdBy: id,
+    });
+
+    const savedUser = await newUser.save();
+    return res.status(201).json({
+      token: savedUser.generateJWT(),
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: { message: 'Error adding a new user into customer' } });
+  }
+};
 
 // const createUser = async (req, res) => {
 //   try {
