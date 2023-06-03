@@ -191,14 +191,26 @@ const getCustomerUsers = async (req, res) => {
   const foundUsers = await User.find({ customerId });
 
   if (!foundUsers)
-    return res
-      .status(404)
-      .json({
-        error: { customerId: 'Invalid customerId or no users with given id' },
-      });
+    return res.status(404).json({
+      error: { customerId: 'Invalid customerId or no users with given id' },
+    });
 
-  return res.status(200).json(foundUsers);
+  const userList = foundUsers.map((user) => {
+    return {
+      _id: user._id,
+      customerId: user.customerId,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      nickname: user.nickname,
+      email: user.email,
+      roleId: user.roleId
+    };
+  });
+
+  return res.status(200).json(userList);
 };
+
+const addUserInExistingCustomer = async (req, res) => {};
 
 // const createUser = async (req, res) => {
 //   try {
@@ -319,4 +331,5 @@ module.exports = {
   login,
   getCurrentUserInfo,
   getCustomerUsers,
+  addUserInExistingCustomer,
 };

@@ -8,7 +8,7 @@ router.post('/register', userController.registerCustomerAndUser);
 router.post('/login', userController.login);
 router.get('/', jwtMiddleware, userController.getCurrentUserInfo);
 router.get('/list', jwtMiddleware, userController.getCustomerUsers)
-
+router.post('/', jwtMiddleware, userController.addUserInExistingCustomer)
 
 // // POST create a new user if doesn't exists
 // router.post('/', userController.createUser);
