@@ -116,7 +116,7 @@ POST /user/login
 Allows to get the current user's data, extracting info from a valid JWT Token.
 
 ```bash
-POST /user/
+GET /user/
 ```
 
 Requires **authentication** via a valid JWT Token in the Authorization header.
