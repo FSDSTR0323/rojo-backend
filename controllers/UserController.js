@@ -64,7 +64,7 @@ const registerUser = async (req, customerId, session) => {
     lastName,
     nickname,
     password,
-    email: (role === ROLES.OWNER) ? existingCustomer.customerEmail : email,
+    email: role === ROLES.OWNER ? existingCustomer.customerEmail : email,
     roleId: existingRole._id,
   });
   const savedUser = await newUser.save({ session });
@@ -146,9 +146,10 @@ const login = async (req, res) => {
     }
 
     // check for existing role
-    const foundRole = await Role.findById(foundUser.role)
+    const foundRole = await Role.findById(foundUser.roleId)
       .populate('permissions')
       .exec();
+
     if (!foundRole) {
       return res
         .status(400)
@@ -170,6 +171,13 @@ const login = async (req, res) => {
       .status(500)
       .json({ error: { register: 'Error Logging in', error: err.message } });
   }
+};
+
+const getCurrentUserInfo = async (req, res) => {
+  const tokenPayload = req.jwtPayload
+  
+  return res.status(200).json(tokenPayload)
+
 };
 
 // const createUser = async (req, res) => {
@@ -289,4 +297,5 @@ const login = async (req, res) => {
 module.exports = {
   registerCustomerAndUser,
   login,
+  getCurrentUserInfo,
 };
