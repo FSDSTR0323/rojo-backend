@@ -161,6 +161,7 @@ const login = async (req, res) => {
 };
 
 const getCurrentUserInfo = async (req, res) => {
+  //TODO: Manage that only users with permission 'user.read' should be able to create users
   const { id, customerId } = req.jwtPayload;
   try {
     const foundUser = await User.findOne({ _id: id, customerId }).populate({
@@ -190,6 +191,8 @@ const getCurrentUserInfo = async (req, res) => {
 };
 
 const getCustomerUsers = async (req, res) => {
+  // TODO: Manage permission with 'user.read'
+  // TODO: filter out deleted users (filter the ones with an existing deletedAt)
   const { customerId } = req.jwtPayload;
 
   try {
@@ -224,6 +227,7 @@ const getCustomerUsers = async (req, res) => {
 };
 
 const addUserInExistingCustomer = async (req, res) => {
+  //TODO: Manage that only users with permission 'user.create' should be able to create users
   const { customerId, id } = req.jwtPayload;
   const { firstName, lastName, nickname, password, email, role } = req.body;
 
@@ -278,119 +282,73 @@ const addUserInExistingCustomer = async (req, res) => {
   }
 };
 
-// const createUser = async (req, res) => {
-//   try {
-//     const { customerId, firstName, lastName, nickname, email, password, role } =
-//       req.body;
+const editUserInExistingCustomer = async (req, res) => {
+  //TODO: Manage that only users with permission 'user.edit' should be able to create users
+  const { id } = req.jwtPayload;
+  const userId = req.params.userId;
+  const { firstName, lastName, email, role } = req.body;
 
-//     const existingUser = await User.findOne({
-//       $or: [{ nickname: nickname }, { email: email }],
-//     });
+  try {
+    const existingUser = await User.findById(userId);
+    if (!existingUser) {
+      return res.status(404).json({
+        error: {
+          message: 'userId does not exist',
+        },
+      });
+    }
 
-//     if (existingUser) {
-//       return res.status(409).json({ msg: 'User already exists' });
-//     }
+    const existingRole = await Role.findOne({ role });
+    if(!existingRole) {
+      return res.status(404).json({
+        error: {
+          message: 'role does not exist',
+        },
+      });
+    }
 
-//     // Validate if customerId is a valid ObjectId (24 num)
-//     if (!mongoose.Types.ObjectId.isValid(customerId)) {
-//       return res.status(400).json({ msg: 'Invalid customerId' });
-//     }
+    //TODO: Get roleID to update the role
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      $set: {
+        firstName: firstName || existingUser.firstName,
+        lastName: lastName || existingUser.lastName,
+        email: email || existingUser.email,
+        roleId: existingUser.roleId || existingRole._id,
+        modifiedBy: id,
+      },
+    });
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res.status(500).json({ error: { message: 'Error editing user' } });
+  }
+};
 
-//     // Validate if role is a valid ObjectId (24 num)
-//     if (!mongoose.Types.ObjectId.isValid(role)) {
-//       return res.status(400).json({ msg: 'Invalid role' });
-//     }
+const deleteUserInExistingCustomer = async (req, res) => {
+  //TODO: Manage that only users with permission 'user.delete' should be able to create users
+  const userId = req.params.userId;
 
-//     const newUser = new User({
-//       customerId,
-//       firstName,
-//       lastName,
-//       nickname,
-//       email,
-//       password,
-//       role,
-//     });
+  try {
+    //TODO: Encapsulate into a function
+    const existingUser = await User.findById(userId);
 
-//     const savedUser = await newUser.save();
+    if (!existingUser) {
+      return res.status(404).json({
+        error: {
+          message: 'userId does not exist',
+        },
+      });
+    }
 
-//     res.status(200).json({
-//       msg: 'User successfully created',
-//       user: savedUser,
-//     });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
-// module.exports = { createUser };
-
-// // Verify user by nickname or userId and update it
-
-// const updateUser = (req, res) => {
-//   const userId = req.params.id;
-//   const { firstName, lastName, nickname, email, password, role } = req.body;
-
-//   User.findOneAndUpdate(
-//     { $or: [{ _id: userId }, { nickname: nickname }] },
-//     {
-//       $set: {
-//         firstName,
-//         lastName,
-//         nickname,
-//         email,
-//         password,
-//         role,
-//       },
-//     },
-//     { new: true }
-//   )
-//     .then((updatedUser) => {
-//       if (updatedUser) {
-//         res.status(200).json(updatedUser);
-//       } else {
-//         res.status(404).json({ msg: 'User not found' });
-//       }
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ error: error.message });
-//     });
-// };
-
-// // Delete user (removed from data base)
-
-// const deleteUser = (req, res) => {
-//   const userId = req.params.id;
-
-//   User.findByIdAndRemove(userId)
-//     .then((deletedUser) => {
-//       if (deletedUser) {
-//         res.status(200).json({ msg: 'User deleted successfully' });
-//       } else {
-//         res.status(404).json({ msg: 'User not found' });
-//       }
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ error: error.message });
-//     });
-// };
-
-// // Soft delete
-
-// const softdeleteUser = (req, res) => {
-//   const userId = req.params.id;
-
-//   User.findByIdAndUpdate(userId, { isDeleted: true })
-//     .then((updatedUser) => {
-//       if (updatedUser) {
-//         res.status(200).json({ msg: 'User deleted successfully' });
-//       } else {
-//         res.status(404).json({ msg: 'User not found' });
-//       }
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ error: error.message });
-//     });
-// };
+    await User.findByIdAndUpdate(userId, {
+      $set: {
+        deletedAt: new Date(),
+      },
+    });
+    return res.status(200).send('User Deleted');
+  } catch (error) {
+    return res.status(500).json({ error: { message: 'Error editing user' } });
+  }
+};
 
 module.exports = {
   registerCustomerAndUser,
@@ -398,4 +356,6 @@ module.exports = {
   getCurrentUserInfo,
   getCustomerUsers,
   addUserInExistingCustomer,
+  editUserInExistingCustomer,
+  deleteUserInExistingCustomer,
 };

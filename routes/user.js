@@ -9,15 +9,9 @@ router.post('/login', userController.login);
 router.get('/', jwtMiddleware, userController.getCurrentUserInfo);
 router.get('/list', jwtMiddleware, userController.getCustomerUsers);
 router.post('/', jwtMiddleware, userController.addUserInExistingCustomer);
-
-// // PUT update user by ID
-// router.put('/:id', userController.updateUser);
-
-// // DELETE user by ID
-// router.delete('/:id', userController.deleteUser);
-
-// // DELETE (soft)
-
-// router.delete('/:id/softdelete', userController.softdeleteUser);
+router.put('/:userId', jwtMiddleware, userController.editUserInExistingCustomer);
+router.delete('/:userId', jwtMiddleware, userController.deleteUserInExistingCustomer)
 
 module.exports = router;
+
+
