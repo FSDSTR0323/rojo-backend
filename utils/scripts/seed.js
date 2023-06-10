@@ -1,4 +1,4 @@
-const express = require('express');
+//const express = require('express');
 const mongoose = require('mongoose');
 
 const roles = require('../../database/samples/roles.sample');
@@ -34,8 +34,6 @@ const seedRolesAndPermissions = async () => {
     console.log('Seeding Permissions');
     const seededPermissions = await Permission.create(permissions);
     console.log(`Seeded ${seededPermissions.length} permissions`);
-
-    console.log(seededPermissions);
 
     console.log('Seeding Roles');
     const seededRoles = await Role.create(
