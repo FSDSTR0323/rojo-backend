@@ -1,5 +1,3 @@
-const express = require('express');
-const router = express.Router();
 const mongoose = require('mongoose');
 const checkRequiredProperties = require('../utils/helperFunctions/checkRequiredProperties');
 const { User, Customer, Role } = require('../database/');
@@ -59,13 +57,13 @@ const registerUser = async (req, customerId, session) => {
 
   // Save user
   const newUser = new User({
-    customerId,
+    customer: customerId,
     firstName,
     lastName,
     nickname,
     password,
     email: role === ROLES.OWNER ? existingCustomer.customerEmail : email,
-    roleId: existingRole._id,
+    role: existingRole._id,
   });
   const savedUser = await newUser.save({ session });
   return savedUser
@@ -80,7 +78,6 @@ const registerCustomerAndUser = async (req, res) => {
     session.startTransaction();
 
     const savedCustomer = await registerCustomer(req, session);
-
     const savedUser = await registerUser(req, savedCustomer.id, session);
 
     // Close session and don't store anything if there's any error in either User or Customer
@@ -140,7 +137,7 @@ const login = async (req, res) => {
     }
 
     // check for existing role
-    const foundRole = await Role.findById(foundUser.roleId)
+    const foundRole = await Role.findById(foundUser.role)
       .populate('permissions')
       .exec();
     if (!foundRole) {
@@ -162,14 +159,17 @@ const login = async (req, res) => {
 
 const getCurrentUserInfo = async (req, res) => {
   //TODO: Manage that only users with permission 'user.read' should be able to create users
-  const { id, customerId } = req.jwtPayload;
+  const { id } = req.jwtPayload;
+
   try {
-    const foundUser = await User.findOne({ _id: id, customerId }).populate({
-      path: 'roleId',
-      populate: {
-        path: 'permissions',
-      },
-    });
+    const foundUser = await User.findById(id)
+      .populate({
+        path: 'role',
+        populate: {
+          path: 'permissions',
+        },
+      })
+      .exec();
 
     if (!foundUser)
       return res.status(404).json({ error: { id: 'User not found' } });
@@ -177,8 +177,8 @@ const getCurrentUserInfo = async (req, res) => {
     const userInfo = {
       nickname: foundUser.nickname,
       email: foundUser.email,
-      role: foundUser.roleId.name,
-      permissions: foundUser.roleId.permissions.map(
+      role: foundUser.role.name,
+      permissions: foundUser.role.permissions.map(
         (permission) => permission.code
       ),
     };
@@ -196,22 +196,22 @@ const getCustomerUsers = async (req, res) => {
   const { customerId } = req.jwtPayload;
 
   try {
-    const foundUsers = await User.find({ customerId });
+    const foundUsers = await User.find({ customer: customerId });
 
-    if (!foundUsers)
+    if (foundUsers.length === 0)
       return res.status(404).json({
-        error: { customerId: 'Invalid customerId or no users with given id' },
+        error: { customer: 'No users for the given customerId' },
       });
 
     const userList = foundUsers.map((user) => {
       return {
         _id: user._id,
-        customerId: user.customerId,
+        customer: user.customer,
         firstName: user.firstName,
         lastName: user.lastName,
         nickname: user.nickname,
         email: user.email,
-        roleId: user.roleId,
+        role: user.role,
       };
     });
 
@@ -261,13 +261,13 @@ const addUserInExistingCustomer = async (req, res) => {
       });
 
     const newUser = new User({
-      customerId,
+      customer: customerId,
       firstName,
       lastName,
       nickname,
       password,
       email,
-      roleId: foundRole._id,
+      role: foundRole._id,
       createdBy: id,
     });
 
@@ -298,25 +298,24 @@ const editUserInExistingCustomer = async (req, res) => {
       });
     }
 
-    const existingRole = await Role.findOne({ role });
-    if(!existingRole) {
-      return res.status(404).json({
-        error: {
-          message: 'role does not exist',
-        },
-      });
-    }
+    const existingRole =
+      (await Role.findOne({ name: role })) ||
+      (await Role.findById(existingUser.role));
 
-    //TODO: Get roleID to update the role
-    const updatedUser = await User.findByIdAndUpdate(userId, {
-      $set: {
-        firstName: firstName || existingUser.firstName,
-        lastName: lastName || existingUser.lastName,
-        email: email || existingUser.email,
-        roleId: existingUser.roleId || existingRole._id,
-        modifiedBy: id,
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          firstName: firstName || existingUser.firstName,
+          lastName: lastName || existingUser.lastName,
+          email: email || existingUser.email,
+          role: existingUser.role || existingRole._id,
+          modifiedBy: id,
+        },
       },
-    });
+      { new: true }
+    );
+
     return res.status(200).json(updatedUser);
   } catch (error) {
     return res.status(500).json({ error: { message: 'Error editing user' } });

@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
   {
-    customerId: {
+    customer: {
       type: Schema.Types.ObjectId,
       ref: 'Customer',
       required: true,
@@ -16,7 +16,7 @@ const UserSchema = new Schema(
     nickname: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     email: { type: String }, //TODO: Validate email format
-    roleId: {
+    role: {
       type: Schema.Types.ObjectId,
       ref: 'Role',
       required: true,
@@ -62,7 +62,7 @@ UserSchema.methods.generateJWT = function () {
 
   let payload = {
     id: this._id,
-    customerId: this.customerId,
+    customerId: this.customer,
   };
   // method from the json-web-token library (who is in charge to generate the JWT)
   return jwt.sign(payload, jwtSecret, {
