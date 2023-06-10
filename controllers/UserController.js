@@ -140,6 +140,7 @@ const login = async (req, res) => {
     const foundRole = await Role.findById(foundUser.role)
       .populate('permissions')
       .exec();
+
     if (!foundRole) {
       return res
         .status(404)
@@ -158,7 +159,6 @@ const login = async (req, res) => {
 };
 
 const getCurrentUserInfo = async (req, res) => {
-  //TODO: Manage that only users with permission 'user.read' should be able to create users
   const { id } = req.jwtPayload;
 
   try {
@@ -191,12 +191,13 @@ const getCurrentUserInfo = async (req, res) => {
 };
 
 const getCustomerUsers = async (req, res) => {
-  // TODO: Manage permission with 'user.read'
-  // TODO: filter out deleted users (filter the ones with an existing deletedAt)
   const { customerId } = req.jwtPayload;
 
   try {
-    const foundUsers = await User.find({ customer: customerId });
+    const foundUsers = await User.find({
+      customer: customerId,
+      deletedAt: { $exists: false },
+    });
 
     if (foundUsers.length === 0)
       return res.status(404).json({
@@ -227,7 +228,6 @@ const getCustomerUsers = async (req, res) => {
 };
 
 const addUserInExistingCustomer = async (req, res) => {
-  //TODO: Manage that only users with permission 'user.create' should be able to create users
   const { customerId, id } = req.jwtPayload;
   const { firstName, lastName, nickname, password, email, role } = req.body;
 
@@ -283,7 +283,6 @@ const addUserInExistingCustomer = async (req, res) => {
 };
 
 const editUserInExistingCustomer = async (req, res) => {
-  //TODO: Manage that only users with permission 'user.edit' should be able to create users
   const { id } = req.jwtPayload;
   const userId = req.params.userId;
   const { firstName, lastName, email, role } = req.body;
@@ -323,7 +322,6 @@ const editUserInExistingCustomer = async (req, res) => {
 };
 
 const deleteUserInExistingCustomer = async (req, res) => {
-  //TODO: Manage that only users with permission 'user.delete' should be able to create users
   const userId = req.params.userId;
 
   try {
