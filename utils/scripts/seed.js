@@ -3,10 +3,12 @@ const mongoose = require('mongoose');
 
 const { User, Role, Customer, Permission } = require('../../database/models');
 
-const rolesSamples = require('../../database/samples/roles.sample');
-const permissionsSamples = require('../../database/samples/permissions.sample');
-const customersSamples = require('../../database/samples/customers.sample');
-const usersSamples = require('../../database/samples/users.sample');
+const {
+  CustomersSamples,
+  PermissionsSamples,
+  RolesSamples,
+  UsersSamples,
+} = require('../../database/samples');
 
 require('dotenv').config();
 
@@ -33,12 +35,12 @@ const seedRolesAndPermissions = async () => {
     await Promise.all([Permission.deleteMany(), Role.deleteMany()]);
 
     console.log('Seeding Permissions');
-    const seededPermissions = await Permission.create(permissionsSamples);
+    const seededPermissions = await Permission.create(PermissionsSamples);
     console.log(`Seeded ${seededPermissions.length} permissions`);
 
     console.log('Seeding Roles');
     const seededRoles = await Role.create(
-      rolesSamples.map((role) => ({
+      RolesSamples.map((role) => ({
         ...role,
         permissions: role.permissions.map(
           (permission) =>
@@ -63,21 +65,19 @@ const seedUsersAndCustomers = async () => {
     await Promise.all([Customer.deleteMany(), User.deleteMany()]);
 
     console.log('Seeding Customers');
-    const seededCustomers = await Customer.create(customersSamples);
+    const seededCustomers = await Customer.create(CustomersSamples);
     console.log(`Seeded ${seededCustomers.length} customers`);
 
     console.log('Seeding Users');
     const roles = await Role.find();
     const seededUsers = await User.create(
-      usersSamples.map((user) => (
-        {
-          ...user,
-          customer: seededCustomers.find(
-            (customer) => customer.customerName === user.customer.customerName
-          )?._id,
-          role: roles.find((role) => role.name === user.role.name)?._id,
-        }
-      ))
+      UsersSamples.map((user) => ({
+        ...user,
+        customer: seededCustomers.find(
+          (customer) => customer.customerName === user.customer.customerName
+        )?._id,
+        role: roles.find((role) => role.name === user.role.name)?._id,
+      }))
     );
     console.log(`Seeded ${seededUsers.length} users`);
   } catch (error) {
