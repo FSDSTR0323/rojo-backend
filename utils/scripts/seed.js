@@ -1,10 +1,12 @@
 //const express = require('express');
 const mongoose = require('mongoose');
 
-const roles = require('../../database/samples/roles.sample');
-const permissions = require('../../database/samples/permissions.sample');
-const Role = require('../../database/models/role.model');
-const Permission = require('../../database/models/permission.model');
+const { User, Role, Customer, Permission } = require('../../database/models');
+
+const rolesSamples = require('../../database/samples/roles.sample');
+const permissionsSamples = require('../../database/samples/permissions.sample');
+const customersSamples = require('../../database/samples/customers.sample');
+const usersSamples = require('../../database/samples/users.sample')
 
 require('dotenv').config();
 
@@ -32,12 +34,12 @@ const seedRolesAndPermissions = async () => {
     await Promise.all([Permission.deleteMany(), Role.deleteMany()]);
 
     console.log('Seeding Permissions');
-    const seededPermissions = await Permission.create(permissions);
+    const seededPermissions = await Permission.create(permissionsSamples);
     console.log(`Seeded ${seededPermissions.length} permissions`);
 
     console.log('Seeding Roles');
     const seededRoles = await Role.create(
-      roles.map((role) => ({
+      rolesSamples.map((role) => ({
         ...role,
         permissions: role.permissions.map(
           (permission) =>
@@ -55,14 +57,26 @@ const seedRolesAndPermissions = async () => {
   }
 };
 
+const seedUsersAndCustomers = async () => {
+  //TODO: Create users and customers in /database/samples and seed them here
+  try {
+    console.log('Clearing existing Customers and Users');
+    await Promise.all([Customer.deleteMany(), User.deleteMany()]);
+
+    console.log('Seeding Customers')
+    const seededCustomers = await Customer.create(customersSamples)
+    console.log(`Seeded ${seededCustomers.length} permissions`);
+
+  } catch (error) {
+    console.log(error);
+  } finally {
+    console.log('Finished seeding Users and Customers');
+  }
+};
+
 const seedHaccps = async () => {
   //TODO: Create haccp object in /database/samples and seed them here
 };
-
-const seedUsersAndCustomers = async () => {
-  //TODO: Create users and customers in /database/samples and seed them here
-};
-
 const seed = async () => {
   try {
     await seedRolesAndPermissions();
