@@ -6,7 +6,7 @@ const { User, Role, Customer, Permission } = require('../../database/models');
 const rolesSamples = require('../../database/samples/roles.sample');
 const permissionsSamples = require('../../database/samples/permissions.sample');
 const customersSamples = require('../../database/samples/customers.sample');
-const usersSamples = require('../../database/samples/users.sample')
+const usersSamples = require('../../database/samples/users.sample');
 
 require('dotenv').config();
 
@@ -20,7 +20,6 @@ const mongoDB =
   process.env.DB_SERVER +
   '/' +
   process.env.DB_NAME +
-  '_TEST' +
   '?retryWrites=true&w=majority';
 
 async function main() {
@@ -63,10 +62,24 @@ const seedUsersAndCustomers = async () => {
     console.log('Clearing existing Customers and Users');
     await Promise.all([Customer.deleteMany(), User.deleteMany()]);
 
-    console.log('Seeding Customers')
-    const seededCustomers = await Customer.create(customersSamples)
-    console.log(`Seeded ${seededCustomers.length} permissions`);
+    console.log('Seeding Customers');
+    const seededCustomers = await Customer.create(customersSamples);
+    console.log(`Seeded ${seededCustomers.length} customers`);
 
+    console.log('Seeding Users');
+    const roles = await Role.find();
+    const seededUsers = await User.create(
+      usersSamples.map((user) => (
+        {
+          ...user,
+          customer: seededCustomers.find(
+            (customer) => customer.customerName === user.customer.customerName
+          )?._id,
+          role: roles.find((role) => role.name === user.role.name)?._id,
+        }
+      ))
+    );
+    console.log(`Seeded ${seededUsers.length} users`);
   } catch (error) {
     console.log(error);
   } finally {
@@ -80,8 +93,8 @@ const seedHaccps = async () => {
 const seed = async () => {
   try {
     await seedRolesAndPermissions();
-    await seedHaccps();
     await seedUsersAndCustomers();
+    await seedHaccps();
   } catch (error) {
     console.log(error);
   } finally {

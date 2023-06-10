@@ -1,5 +1,3 @@
-const express = require('express');
-const router = express.Router();
 const mongoose = require('mongoose');
 const checkRequiredProperties = require('../utils/helperFunctions/checkRequiredProperties');
 const { User, Customer, Role } = require('../database/');
