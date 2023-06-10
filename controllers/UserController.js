@@ -141,7 +141,6 @@ const login = async (req, res) => {
       .populate('permissions')
       .exec();
 
-    console.log(foundUser);
     if (!foundRole) {
       return res
         .status(404)
@@ -192,11 +191,13 @@ const getCurrentUserInfo = async (req, res) => {
 };
 
 const getCustomerUsers = async (req, res) => {
-  // TODO: filter out deleted users (filter the ones with an existing deletedAt)
   const { customerId } = req.jwtPayload;
 
   try {
-    const foundUsers = await User.find({ customer: customerId });
+    const foundUsers = await User.find({
+      customer: customerId,
+      deletedAt: { $exists: false },
+    });
 
     if (foundUsers.length === 0)
       return res.status(404).json({
