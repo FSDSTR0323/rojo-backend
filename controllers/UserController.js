@@ -270,7 +270,6 @@ const deleteUserInExistingCustomer = async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    //TODO: Encapsulate into a function
     const existingUser = await User.findById(userId);
 
     if (!existingUser) {
