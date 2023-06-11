@@ -14,6 +14,8 @@ const userInfoMiddleware = async (req, res, next) => {
       })
       .exec();
 
+    
+
     req.userData = user;
     next();
   } catch (error) {

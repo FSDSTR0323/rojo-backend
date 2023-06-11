@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const checkRequiredProperties = require('../utils/helperFunctions/checkRequiredProperties');
 const { User, Customer, Role } = require('../database/');
 const { ROLES } = require('../utils/constants/roles');
 
@@ -7,11 +6,6 @@ const { ROLES } = require('../utils/constants/roles');
 const registerCustomer = async (req, session) => {
   const { customerName, customerAddress, customerEmail, customerCif } =
     req.body;
-
-  // Check required parameters for Customer
-  const requiredProperties = ['customerName', 'customerEmail', 'customerCif'];
-  const errorMessage = checkRequiredProperties(req, requiredProperties);
-  if (errorMessage) return { error: { status: 400, message: errorMessage } };
 
   const existingCustomer = await Customer.findOne({ customerCif });
   if (existingCustomer)
@@ -32,17 +26,6 @@ const registerCustomer = async (req, session) => {
 
 const registerUser = async (req, customerId, session) => {
   const { firstName, lastName, nickname, password, email, role } = req.body;
-
-  // Check required parameters for User
-  const requiredProperties = [
-    'firstName',
-    'lastName',
-    'nickname',
-    'password',
-    'role',
-  ];
-  const errorMessage = checkRequiredProperties(req, requiredProperties);
-  if (errorMessage) return { error: { status: 400, message: errorMessage } };
 
   const existingUser = await User.findOne({ nickname }).session(session);
   const existingCustomer = await Customer.findById(customerId).session(session);
@@ -115,13 +98,6 @@ const registerCustomerAndUser = async (req, res) => {
 
 const login = async (req, res) => {
   const { nickname, password } = req.body;
-
-  // Check required parameters for User login
-  const requiredProperties = ['nickname', 'password'];
-  const errorMessage = checkRequiredProperties(req, requiredProperties);
-  if (errorMessage) {
-    return res.status(400).json({ error: { login: errorMessage } });
-  }
 
   try {
     // check for duplicate user
@@ -230,18 +206,6 @@ const getCustomerUsers = async (req, res) => {
 const addUserInExistingCustomer = async (req, res) => {
   const { customerId, id } = req.jwtPayload;
   const { firstName, lastName, nickname, password, email, role } = req.body;
-
-  // Check required parameters for User
-  const requiredProperties = [
-    'firstName',
-    'lastName',
-    'nickname',
-    'password',
-    'role',
-  ];
-  const errorMessage = checkRequiredProperties(req, requiredProperties);
-  if (errorMessage)
-    return res.status(400).json({ error: { message: errorMessage } });
 
   try {
     const existingUser = await User.findOne({ nickname });
