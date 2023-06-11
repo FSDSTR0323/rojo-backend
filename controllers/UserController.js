@@ -135,35 +135,16 @@ const login = async (req, res) => {
 };
 
 const getCurrentUserInfo = async (req, res) => {
-  const { id } = req.jwtPayload;
+  const userData = req.userData;
 
-  try {
-    const foundUser = await User.findById(id)
-      .populate({
-        path: 'role',
-        populate: {
-          path: 'permissions',
-        },
-      })
-      .exec();
+  const userInfo = {
+    nickname: userData.nickname,
+    email: userData.email,
+    role: userData.role.name,
+    permissions: userData.role.permissions.map((permission) => permission.code),
+  };
 
-    if (!foundUser)
-      return res.status(404).json({ error: { id: 'User not found' } });
-
-    const userInfo = {
-      nickname: foundUser.nickname,
-      email: foundUser.email,
-      role: foundUser.role.name,
-      permissions: foundUser.role.permissions.map(
-        (permission) => permission.code
-      ),
-    };
-    return res.status(200).json(userInfo);
-  } catch (error) {
-    return res.status(500).json({
-      error: { userInfo: 'Error getting user info', error: error.message },
-    });
-  }
+  return res.status(200).json(userInfo);
 };
 
 const getCustomerUsers = async (req, res) => {

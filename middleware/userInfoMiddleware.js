@@ -14,12 +14,14 @@ const userInfoMiddleware = async (req, res, next) => {
       })
       .exec();
 
-    
+    if (!user) {
+      return res.status(404).json({ error: { id: 'User not found' } });
+    }
 
     req.userData = user;
     next();
   } catch (error) {
-    res.status(500).json({ error: { message: error.message } });
+    return res.status(500).json({ error: { message: error.message } });
   }
 };
 
