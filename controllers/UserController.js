@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const checkRequiredProperties = require('../utils/helperFunctions/checkRequiredProperties');
 const { User, Customer, Role } = require('../database/');
 const { ROLES } = require('../utils/constants/roles');
 
@@ -7,11 +6,6 @@ const { ROLES } = require('../utils/constants/roles');
 const registerCustomer = async (req, session) => {
   const { customerName, customerAddress, customerEmail, customerCif } =
     req.body;
-
-  // Check required parameters for Customer
-  const requiredProperties = ['customerName', 'customerEmail', 'customerCif'];
-  const errorMessage = checkRequiredProperties(req, requiredProperties);
-  if (errorMessage) return { error: { status: 400, message: errorMessage } };
 
   const existingCustomer = await Customer.findOne({ customerCif });
   if (existingCustomer)
@@ -32,17 +26,6 @@ const registerCustomer = async (req, session) => {
 
 const registerUser = async (req, customerId, session) => {
   const { firstName, lastName, nickname, password, email, role } = req.body;
-
-  // Check required parameters for User
-  const requiredProperties = [
-    'firstName',
-    'lastName',
-    'nickname',
-    'password',
-    'role',
-  ];
-  const errorMessage = checkRequiredProperties(req, requiredProperties);
-  if (errorMessage) return { error: { status: 400, message: errorMessage } };
 
   const existingUser = await User.findOne({ nickname }).session(session);
   const existingCustomer = await Customer.findById(customerId).session(session);
@@ -116,13 +99,6 @@ const registerCustomerAndUser = async (req, res) => {
 const login = async (req, res) => {
   const { nickname, password } = req.body;
 
-  // Check required parameters for User login
-  const requiredProperties = ['nickname', 'password'];
-  const errorMessage = checkRequiredProperties(req, requiredProperties);
-  if (errorMessage) {
-    return res.status(400).json({ error: { login: errorMessage } });
-  }
-
   try {
     // check for duplicate user
     const foundUser = await User.findOne({ nickname });
@@ -159,35 +135,16 @@ const login = async (req, res) => {
 };
 
 const getCurrentUserInfo = async (req, res) => {
-  const { id } = req.jwtPayload;
+  const userData = req.userData;
 
-  try {
-    const foundUser = await User.findById(id)
-      .populate({
-        path: 'role',
-        populate: {
-          path: 'permissions',
-        },
-      })
-      .exec();
+  const userInfo = {
+    nickname: userData.nickname,
+    email: userData.email,
+    role: userData.role.name,
+    permissions: userData.role.permissions.map((permission) => permission.code),
+  };
 
-    if (!foundUser)
-      return res.status(404).json({ error: { id: 'User not found' } });
-
-    const userInfo = {
-      nickname: foundUser.nickname,
-      email: foundUser.email,
-      role: foundUser.role.name,
-      permissions: foundUser.role.permissions.map(
-        (permission) => permission.code
-      ),
-    };
-    return res.status(200).json(userInfo);
-  } catch (error) {
-    return res.status(500).json({
-      error: { userInfo: 'Error getting user info', error: error.message },
-    });
-  }
+  return res.status(200).json(userInfo);
 };
 
 const getCustomerUsers = async (req, res) => {
@@ -230,18 +187,6 @@ const getCustomerUsers = async (req, res) => {
 const addUserInExistingCustomer = async (req, res) => {
   const { customerId, id } = req.jwtPayload;
   const { firstName, lastName, nickname, password, email, role } = req.body;
-
-  // Check required parameters for User
-  const requiredProperties = [
-    'firstName',
-    'lastName',
-    'nickname',
-    'password',
-    'role',
-  ];
-  const errorMessage = checkRequiredProperties(req, requiredProperties);
-  if (errorMessage)
-    return res.status(400).json({ error: { message: errorMessage } });
 
   try {
     const existingUser = await User.findOne({ nickname });
