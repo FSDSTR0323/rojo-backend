@@ -4,12 +4,11 @@ const Schema = mongoose.Schema;
 const RecipeSchema = new Schema(
   {
     name: { type: String, required: true },
-    steps: [
-      {
-        name: { type: String },
-        haccp: { type: Schema.Types.ObjectId, ref: 'haccp' },
-      },
-    ], //// això no ho tinc gaire clar, si es ok així
+    haccpPrePreparation: { type: [ObjectId], required: true },
+    haccpPreparation: { type: [ObjectId], required: true },
+    haccpFinalitzation: { type: [ObjectId], required: true },
+    image: { type: String, required: true },
+    createdBy: { type: ObjectId, required: true},
     deletedAt: { type: Date },
   },
   {
