@@ -34,20 +34,20 @@ const permissions = [
     description: 'Allows to delete a recipe',
   },
   {
-    code: PERMISSIONS.PREPARATION_CREATE,
-    description: 'Allows to create a preparation',
+    code: PERMISSIONS.VALIDATION_CREATE,
+    description: 'Allows to create a validation',
   },
   {
-    code: PERMISSIONS.PREPARATION_READ,
-    description: 'Allows to check all preparations',
+    code: PERMISSIONS.VALIDATION_READ,
+    description: 'Allows to check all validations',
   },
   {
-    code: PERMISSIONS.PREPARATION_UPDATE,
-    description: 'Allows to modify a preparation',
+    code: PERMISSIONS.VALIDATION_UPDATE,
+    description: 'Allows to modify a validation',
   },
   {
-    code: PERMISSIONS.PREPARATION_UPDATE,
-    description: 'Allows to delete a preparation',
+    code: PERMISSIONS.VALIDATION_UPDATE,
+    description: 'Allows to delete a validation',
   },
 ];
 

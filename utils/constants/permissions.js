@@ -7,10 +7,10 @@ const PERMISSIONS = {
   RECIPE_READ: 'recipe.read',
   RECIPE_UPDATE: 'recipe.update',
   RECIPE_DELETE: 'recipe.delete',
-  PREPARATION_CREATE: 'preparation.create',
-  PREPARATION_READ: 'preparation.read',
-  PREPARATION_UPDATE: 'preparation.update',
-  PREPARATION_DELETE: 'preparation.delete',
+  VALIDATION_CREATE: 'validation.create',
+  VALIDATION_READ: 'validation.read',
+  VALIDATION_UPDATE: 'validation.update',
+  VALIDATION_DELETE: 'validation.delete',
 };
 
 module.exports = PERMISSIONS;
