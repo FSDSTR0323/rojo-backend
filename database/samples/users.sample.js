@@ -10,6 +10,16 @@ const users = [
     password: '12345',
     email: 'paco.viruelas@gmail.com',
     role: roles[0],
+    role: {
+      name: "owner",
+      permissions: [
+        {
+          code:
+          description:
+        },
+        {}
+      ]
+    }
   },
   {
     customer: customers[0],

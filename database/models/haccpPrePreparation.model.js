@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const haccpPrePreparationSchema = new Schema(
   {
     name: { type: String, required: true },
-    name: { type: String, required: true },
     status: { type: String, required: true },
     hazzzardControl: { type: String, required: true },
     procedure: { type: String, required: true },
