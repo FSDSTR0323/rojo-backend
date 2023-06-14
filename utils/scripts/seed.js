@@ -59,7 +59,6 @@ const seedRolesAndPermissions = async () => {
 };
 
 const seedUsersAndCustomers = async () => {
-  //TODO: Create users and customers in /database/samples and seed them here
   try {
     console.log('Clearing existing Customers and Users');
     await Promise.all([Customer.deleteMany(), User.deleteMany()]);

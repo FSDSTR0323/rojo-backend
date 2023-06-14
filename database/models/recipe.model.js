@@ -4,11 +4,10 @@ const Schema = mongoose.Schema;
 const RecipeSchema = new Schema(
   {
     name: { type: String, required: true },
-    haccpPrePreparation: { type: [ObjectId], required: true },
-    haccpPreparation: { type: [ObjectId], required: true },
-    haccpFinalitzation: { type: [ObjectId], required: true },
+    haccp: [{ type: Schema.Types.ObjectId, ref: 'Haccp', required: true }],
     image: { type: String, required: true },
-    createdBy: { type: ObjectId, required: true},
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    modifiedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     deletedAt: { type: Date },
   },
   {
