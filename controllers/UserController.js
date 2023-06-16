@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const { User, Customer, Role } = require('../database/');
 const { ROLES } = require('../utils/constants/roles');
 
-// Verify user by nickname or email, if it doesn't exists create new one
 const registerCustomer = async (req, session) => {
+  //TODO: Customer email is the same as user email. Change requirement and value
   const { customerName, customerAddress, customerEmail, customerCif } =
     req.body;
 
@@ -267,6 +267,7 @@ const editUserInExistingCustomer = async (req, res) => {
 };
 
 const deleteUserInExistingCustomer = async (req, res) => {
+  //TODO: User can't delete himself
   const userId = req.params.userId;
 
   try {
