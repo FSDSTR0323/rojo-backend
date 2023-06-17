@@ -1,12 +1,13 @@
+const ROLES = require('../../utils/constants/roles');
 const permissions = require('./permissions.sample');
 
 const roles = [
   {
-    name: 'owner',
+    name: ROLES.OWNER,
     permissions: permissions,
   },
   {
-    name: 'headchef',
+    name: ROLES.HEAD,
     permissions: permissions.filter(
       (permission) =>
         permission.code.includes('recipe') ||
@@ -14,7 +15,7 @@ const roles = [
     ),
   },
   {
-    name: 'chef',
+    name: ROLES.CHEF,
     permissions: permissions.filter((permission) =>
       permission.code.includes('validation')
     ),

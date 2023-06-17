@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const INGREDIENTS_STATUS = require('../../utils/constants/ingredientsStatus');
 const HACCP_STEPS = require('../../utils/constants/haccpSteps');
+
 const Schema = mongoose.Schema;
 
 const HaccpSchema = new Schema(
@@ -12,10 +13,10 @@ const HaccpSchema = new Schema(
       enum: Object.values(INGREDIENTS_STATUS),
       required: true,
     },
-    hazzardControl: { type: String, required: true },
-    procedure: { type: String, required: true },
-    frequency: { type: String, required: true },
-    limits: { type: String, required: true },
+    hazzardControl: [{ type: String, required: true }],
+    procedure: [{ type: String, required: true }],
+    frequency: [{ type: String, required: true }],
+    limits: [{ type: String, required: true }],
     correctiveActions: [{ type: String, required: true }],
     deletedAt: { type: Date },
   },
