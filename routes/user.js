@@ -13,7 +13,6 @@ router.post(
   '/register',
   checkRequiredParamsMiddleware([
     'customerName',
-    'customerEmail',
     'customerCif',
     'firstName',
     'lastName',

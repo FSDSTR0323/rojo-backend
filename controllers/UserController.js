@@ -3,8 +3,7 @@ const { User, Customer, Role } = require('../database/');
 const { ROLES } = require('../utils/constants/roles');
 
 const registerCustomer = async (req, session) => {
-  //TODO: Customer email is the same as user email. Change requirement and value
-  const { customerName, customerAddress, customerEmail, customerCif } =
+  const { customerName, customerAddress, email, customerCif } =
     req.body;
 
   const existingCustomer = await Customer.findOne({ customerCif });
@@ -15,7 +14,7 @@ const registerCustomer = async (req, session) => {
   const newCustomer = new Customer({
     customerName,
     customerAddress,
-    customerEmail,
+    customerEmail: email,
     customerCif,
   });
   const savedCustomer = await newCustomer.save({ session });
