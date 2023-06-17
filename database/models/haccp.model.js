@@ -16,13 +16,7 @@ const HaccpSchema = new Schema(
     procedure: { type: String, required: true },
     frequency: { type: String, required: true },
     limits: { type: String, required: true },
-    correctiveActions: [
-      {
-        //Objecte d'objectes
-        id: { type: String, required: true }, //Es podria crear amb uuid4
-        description: { type: String, required: true },
-      },
-    ],
+    correctiveActions: [{ type: String, required: true }],
     deletedAt: { type: Date },
   },
   {

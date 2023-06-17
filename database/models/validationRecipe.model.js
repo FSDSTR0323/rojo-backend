@@ -7,7 +7,7 @@ const validationRecipeSchema = new Schema(
     steps: [
       {
         haccpId: { type: Schema.Types.ObjectId, ref: 'Haccp', required: true },
-        status: { type: Boolean, required: true }, //Accepted. Refused
+        valid: { type: Boolean, required: true },
         correctiveActions: [{ type: String }], //ids interns, no de BD dels corrective actions
         comment: { type: String },
       },
