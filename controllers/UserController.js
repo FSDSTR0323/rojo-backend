@@ -227,13 +227,12 @@ const addUserInExistingCustomer = async (req, res) => {
 };
 
 const editUserInExistingCustomer = async (req, res) => {
-  //TODO: If user role is owner can't change its own role
   const { id } = req.jwtPayload;
   const userId = req.params.userId;
   const { firstName, lastName, email, role } = req.body;
 
   try {
-    const existingUser = await User.findById(userId);
+    const existingUser = await User.findById(userId).populate('role').exec();
     if (!existingUser) {
       return res.status(404).json({
         error: {
@@ -246,6 +245,12 @@ const editUserInExistingCustomer = async (req, res) => {
       (await Role.findOne({ name: role })) ||
       (await Role.findById(existingUser.role));
 
+    if (role !== undefined && existingUser.role.name === ROLES.OWNER) {
+      return res.status(400).json({
+        error: { message: 'User with Owner role cannnot edit its own role' },
+      });
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
@@ -253,7 +258,7 @@ const editUserInExistingCustomer = async (req, res) => {
           firstName: firstName || existingUser.firstName,
           lastName: lastName || existingUser.lastName,
           email: email || existingUser.email,
-          role: existingUser.role || existingRole._id,
+          role: existingUser.role._id || existingRole._id,
           modifiedBy: id,
         },
       },
@@ -271,14 +276,12 @@ const deleteUserInExistingCustomer = async (req, res) => {
   const userId = req.params.userId;
 
   if (userId === id)
-    return res
-      .status(400)
-      .json({
-        error: {
-          message:
-            'User to delete is the same as the user requesting the deletion. Unauthorised action',
-        },
-      });
+    return res.status(400).json({
+      error: {
+        message:
+          'User to delete is the same as the user requesting the deletion. Unauthorised action',
+      },
+    });
 
   try {
     const existingUser = await User.findById(userId);
