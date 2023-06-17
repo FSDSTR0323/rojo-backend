@@ -3,8 +3,7 @@ const { User, Customer, Role } = require('../database/');
 const { ROLES } = require('../utils/constants/roles');
 
 const registerCustomer = async (req, session) => {
-  const { customerName, customerAddress, email, customerCif } =
-    req.body;
+  const { customerName, customerAddress, email, customerCif } = req.body;
 
   const existingCustomer = await Customer.findOne({ customerCif });
   if (existingCustomer)
@@ -268,8 +267,18 @@ const editUserInExistingCustomer = async (req, res) => {
 };
 
 const deleteUserInExistingCustomer = async (req, res) => {
-  //TODO: User can't delete himself
+  const { id } = req.jwtPayload;
   const userId = req.params.userId;
+
+  if (userId === id)
+    return res
+      .status(400)
+      .json({
+        error: {
+          message:
+            'User to delete is the same as the user requesting the deletion. Unauthorised action',
+        },
+      });
 
   try {
     const existingUser = await User.findById(userId);

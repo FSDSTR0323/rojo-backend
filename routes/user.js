@@ -17,6 +17,7 @@ router.post(
     'firstName',
     'lastName',
     'nickname',
+    'email',
     'password',
     'role',
   ]),
