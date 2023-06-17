@@ -154,7 +154,9 @@ const getCustomerUsers = async (req, res) => {
     const foundUsers = await User.find({
       customer: customerId,
       deletedAt: { $exists: false },
-    });
+    })
+      .populate('role')
+      .exec();
 
     if (foundUsers.length === 0)
       return res.status(404).json({
@@ -164,12 +166,11 @@ const getCustomerUsers = async (req, res) => {
     const userList = foundUsers.map((user) => {
       return {
         _id: user._id,
-        customer: user.customer,
         firstName: user.firstName,
         lastName: user.lastName,
         nickname: user.nickname,
         email: user.email,
-        role: user.role,
+        role: user.role.name,
       };
     });
 
@@ -228,6 +229,7 @@ const addUserInExistingCustomer = async (req, res) => {
 };
 
 const editUserInExistingCustomer = async (req, res) => {
+  //TODO: If user role is owner can't change its own role
   const { id } = req.jwtPayload;
   const userId = req.params.userId;
   const { firstName, lastName, email, role } = req.body;
