@@ -49,6 +49,10 @@ const permissions = [
     code: PERMISSIONS.VALIDATION_UPDATE,
     description: 'Allows to delete a validation',
   },
+  {
+    code: PERMISSIONS.HACCP_READ,
+    description: 'Allows to read through the list of HACCPs',
+  }
 ];
 
 module.exports = permissions;

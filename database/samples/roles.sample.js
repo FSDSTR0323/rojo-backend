@@ -11,7 +11,8 @@ const roles = [
     permissions: permissions.filter(
       (permission) =>
         permission.code.includes('recipe') ||
-        permission.code.includes('validation')
+        permission.code.includes('validation') ||
+        permission.code.includes('haccp')
     ),
   },
   {
