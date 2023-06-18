@@ -1,13 +1,19 @@
-//const express = require('express');
 const mongoose = require('mongoose');
 
-const { User, Role, Customer, Permission } = require('../../database/models');
+const {
+  User,
+  Role,
+  Customer,
+  Permission,
+  Haccp,
+} = require('../../database/models');
 
 const {
   CustomersSamples,
   PermissionsSamples,
   RolesSamples,
   UsersSamples,
+  HaccpsSamples,
 } = require('../../database/samples');
 
 require('dotenv').config();
@@ -87,8 +93,19 @@ const seedUsersAndCustomers = async () => {
 };
 
 const seedHaccps = async () => {
-  //TODO: Create haccp object in /database/samples and seed them here
+  console.log('Clearing existing HACCPs');
+  await Promise.all([Haccp.deleteMany()]);
+  try {
+    console.log('Seeding HACCPS');
+    const seededHaccps = await Haccp.create(HaccpsSamples);
+    console.log(`Seeded ${seededHaccps.length} Haccp rules`);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    console.log('Finished seeding Haccps');
+  }
 };
+
 const seed = async () => {
   try {
     await seedRolesAndPermissions();

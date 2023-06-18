@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { User, Customer, Role } = require('../database/');
+const { User, Customer, Role } = require('../database');
 const { ROLES } = require('../utils/constants/roles');
 
 const registerCustomer = async (req, session) => {

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const jwtSecret = process.env.JWT_SECRET;
+
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
@@ -11,11 +12,11 @@ const UserSchema = new Schema(
       ref: 'Customer',
       required: true,
     },
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    nickname: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    email: { type: String }, //TODO: Validate email format
+    firstName: { type: String, required: true, trim: true },
+    lastName: { type: String, required: true, trim: true },
+    nickname: { type: String, required: true, unique: true, trim: true },
+    password: { type: String, required: true, trim: true },
+    email: { type: String, trim: true }, //TODO: Validate email format
     role: {
       type: Schema.Types.ObjectId,
       ref: 'Role',

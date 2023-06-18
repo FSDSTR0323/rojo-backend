@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 
 const RestaurantSchema = new Schema(
@@ -10,7 +11,7 @@ const RestaurantSchema = new Schema(
     },
     name: { type: String, required: true },
     address: { type: String }, // TODO: Add required when needed
-    //TODO: Add phone when needed
+    phoneNumber: { type: Number },
     deletedAt: { type: Date },
   },
   {

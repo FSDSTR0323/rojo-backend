@@ -4,4 +4,4 @@ const ROLES = {
   CHEF: 'chef',
 };
 
-module.exports = { ROLES };
+module.exports = ROLES;

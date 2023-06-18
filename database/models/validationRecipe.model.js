@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 
 const validationRecipeSchema = new Schema(
@@ -7,8 +8,8 @@ const validationRecipeSchema = new Schema(
     steps: [
       {
         haccpId: { type: Schema.Types.ObjectId, ref: 'Haccp', required: true },
-        status: { type: Boolean, required: true }, //Accepted. Refused
-        correctiveActions: [{ type: String }], //ids interns, no de BD dels corrective actions
+        valid: { type: Boolean, required: true },
+        correctiveActions: [{ type: String }],
         comment: { type: String },
       },
     ],
