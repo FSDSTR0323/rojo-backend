@@ -9,7 +9,7 @@ const validationRecipeSchema = new Schema(
       {
         haccpId: { type: Schema.Types.ObjectId, ref: 'Haccp', required: true },
         valid: { type: Boolean, required: true },
-        correctiveActions: [{ type: String }], //ids interns, no de BD dels corrective actions
+        correctiveActions: [{ type: String }],
         comment: { type: String },
       },
     ],
