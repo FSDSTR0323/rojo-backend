@@ -1,7 +1,7 @@
 const HACCP_STEPS = {
-  PREPREPARATION: 'pre-preparation',
-  PREPARATION: 'preparation',
-  FINALIZATION: 'finalization',
+  PREPREPARATION: 'Pre-preparation',
+  PREPARATION: 'Preparation',
+  FINALIZATION: 'Finalization',
 };
 
 module.exports = HACCP_STEPS;
