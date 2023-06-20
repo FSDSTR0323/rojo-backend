@@ -17,7 +17,7 @@ const getHaccps = async (req, res) => {
   if (keep) {
     filter = {
       ...filter,
-      'finalStatus.keep': {
+      'action.keep': {
         $in: keep.split(','),
       },
     };
@@ -26,7 +26,7 @@ const getHaccps = async (req, res) => {
   if (use) {
     filter = {
       ...filter,
-      'finalStatus.use': {
+      'action.use': {
         $in: use.split(','),
       },
     };

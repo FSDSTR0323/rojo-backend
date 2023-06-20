@@ -1,12 +1,21 @@
 const mongoose = require('mongoose');
 
+const {
+  ActionSchema,
+  ActionSchemaValidator,
+} = require('../schemas/action.schema');
+
 const Schema = mongoose.Schema;
 
 const RecipeSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
     haccp: [{ type: Schema.Types.ObjectId, ref: 'Haccp', required: true }],
-    recipeAction: [], //TODO: Can be Keep / Use. Can be both
+    action: {
+      type: ActionSchema,
+      ...ActionSchemaValidator,
+      required: true,
+    },
     image: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     modifiedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },

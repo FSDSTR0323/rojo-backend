@@ -7,7 +7,7 @@ const haccps = [
     name: 'Chilled storage',
     step: HACCP_STEPS.PRE_PREPARATION,
     ingredientsStatus: INGREDIENTS_STATUS.CHILLED,
-    finalStatus: RECIPE_ACTIONS,
+    action: RECIPE_ACTIONS,
     hazzard: ['Growth of food poisoning bacteria'],
     control: [
       'Stored in fridge at temperatures that slow bacterial growth',
@@ -27,7 +27,7 @@ const haccps = [
     name: 'Chilled storage',
     step: HACCP_STEPS.PRE_PREPARATION,
     ingredientsStatus: INGREDIENTS_STATUS.CHILLED,
-    finalStatus: RECIPE_ACTIONS,
+    action: RECIPE_ACTIONS,
     hazzard: [
       'Contamination with food poisoning bacteria, physical and chemical contaminants',
     ],
@@ -41,7 +41,7 @@ const haccps = [
     name: 'Frozen storage',
     step: HACCP_STEPS.PRE_PREPARATION,
     ingredientsStatus: INGREDIENTS_STATUS.FROZEN,
-    finalStatus: RECIPE_ACTIONS,
+    action: RECIPE_ACTIONS,
     hazzard: ['Growth of bacteria'],
     control: [
       'Stored in freezer at temperatures thast inhibit bacterial growth',
@@ -61,7 +61,7 @@ const haccps = [
     name: 'Dry goods storage',
     step: HACCP_STEPS.PRE_PREPARATION,
     ingredientsStatus: INGREDIENTS_STATUS.DRY,
-    finalStatus: RECIPE_ACTIONS,
+    action: RECIPE_ACTIONS,
     hazzard: [
       'Contamination by spoilage bacteria, chemicals, pests and physicals contaminants',
     ],
@@ -75,7 +75,7 @@ const haccps = [
     name: 'Defrosting',
     step: HACCP_STEPS.PRE_PREPARATION,
     ingredientsStatus: INGREDIENTS_STATUS.FROZEN,
-    finalStatus: {
+    action: {
       keep: ['Keep cold'],
       use: ['Hot holding', 'Cold holding'],
     },
@@ -96,7 +96,7 @@ const haccps = [
     name: 'Defrosting',
     step: HACCP_STEPS.PRE_PREPARATION,
     ingredientsStatus: INGREDIENTS_STATUS.FROZEN,
-    finalStatus: {
+    action: {
       keep: ['Keep cold'],
       use: ['Hot holding', 'Cold holding'],
     },
@@ -113,7 +113,7 @@ const haccps = [
     name: 'Preparation',
     step: HACCP_STEPS.PREPARATION,
     ingredientsStatus: Object.values(INGREDIENTS_STATUS),
-    finalStatus: RECIPE_ACTIONS,
+    action: RECIPE_ACTIONS,
     hazzard: [
       'Growth of food poisoning bacteria in high-risk foods left at ambient',
     ],
@@ -129,7 +129,7 @@ const haccps = [
     name: 'Preparation',
     step: HACCP_STEPS.PREPARATION,
     ingredientsStatus: Object.values(INGREDIENTS_STATUS),
-    finalStatus: RECIPE_ACTIONS,
+    action: RECIPE_ACTIONS,
     hazzard: ['Contamination of high-risk food with food poisoning bacteria'],
     control: [
       'Separation of non-RTE and RTE activities by equipment and desinfection',
@@ -143,7 +143,7 @@ const haccps = [
     name: 'Cooking',
     step: HACCP_STEPS.PREPARATION,
     ingredientsStatus: [INGREDIENTS_STATUS.FROZEN, INGREDIENTS_STATUS.DRY],
-    finalStatus: RECIPE_ACTIONS,
+    action: RECIPE_ACTIONS,
     hazzard: ['Survival of food poisoning bacteria, spores and toxins'],
     control: [
       'Thorough cooking to specified temperature for the set lengh of time',
@@ -161,7 +161,7 @@ const haccps = [
     name: 'Cooling',
     step: HACCP_STEPS.FINALIZATION,
     ingredientsStatus: INGREDIENTS_STATUS.FROZEN, //TODO: applies to FROZEN
-    finalStatus: RECIPE_ACTIONS,
+    action: RECIPE_ACTIONS,
     hazzard: ['Growth of surviving bacteria', 'Germination of spores'],
     control: ['Rapid cooling'],
     procedure: ['Probing of food and recording times and temperatures'],
@@ -180,7 +180,7 @@ const haccps = [
     name: 'Hot Holding',
     step: HACCP_STEPS.FINALIZATION,
     ingredientsStatus: Object.values(INGREDIENTS_STATUS),
-    finalStatus: {
+    action: {
       use: ['Hot holding'],
     },
     hazzard: ['Growth of food poisoning bacteria'],
@@ -197,7 +197,7 @@ const haccps = [
     name: 'Hot Holding',
     step: HACCP_STEPS.FINALIZATION,
     ingredientsStatus: Object.values(INGREDIENTS_STATUS),
-    finalStatus: {
+    action: {
       use: ['Hot holding'],
     },
     hazzard: [
@@ -213,7 +213,7 @@ const haccps = [
     name: 'Re-heating',
     step: HACCP_STEPS.FINALIZATION,
     ingredientsStatus: Object.values(INGREDIENTS_STATUS),
-    finalStatus: {
+    action: {
       use: ['Hot holding'],
     },
     hazzard: ['Survival of food poisoning bacteria'],
@@ -231,7 +231,7 @@ const haccps = [
     name: 'Display Cold',
     step: HACCP_STEPS.FINALIZATION,
     ingredientsStatus: Object.values(INGREDIENTS_STATUS),
-    finalStatus: {
+    action: {
       use: ['Cold holding'],
     },
     hazzard: ['Growth of food poisoning bacteria in a high risk food'],
@@ -248,7 +248,7 @@ const haccps = [
     name: 'Display Cold',
     step: HACCP_STEPS.FINALIZATION,
     ingredientsStatus: Object.values(INGREDIENTS_STATUS),
-    finalStatus: {
+    action: {
       use: ['Cold holding'],
     },
     hazzard: [
