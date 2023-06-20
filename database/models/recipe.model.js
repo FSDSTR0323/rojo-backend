@@ -6,7 +6,8 @@ const RecipeSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
     haccp: [{ type: Schema.Types.ObjectId, ref: 'Haccp', required: true }],
-    image: { type: String, required: true },
+    recipeAction: [], //TODO: Can be Keep / Use. Can be both
+    image: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     modifiedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     deletedAt: { type: Date },

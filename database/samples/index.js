@@ -4,6 +4,7 @@ const PermissionsSamples = require('./permissions.sample');
 const RolesSamples = require('./roles.sample');
 const UsersSamples = require('./users.sample');
 const HaccpsSamples = require('./haccps.sample');
+const RecipesSamples = require('./recipes.sample')
 
 module.exports = {
   CustomersSamples,
@@ -11,4 +12,5 @@ module.exports = {
   RolesSamples,
   UsersSamples,
   HaccpsSamples,
+  RecipesSamples
 };
