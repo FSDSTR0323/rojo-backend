@@ -146,7 +146,7 @@ const haccps = [
     action: RECIPE_ACTIONS,
     hazzard: ['Survival of food poisoning bacteria, spores and toxins'],
     control: [
-      'Thorough cooking to specified temperature for the set lengh of time',
+      'Thorough cooking to specified temperature for the set length of time',
     ],
     procedure: ['Proving of food'],
     frequency: ['Every batch'],
@@ -160,8 +160,11 @@ const haccps = [
   {
     name: 'Cooling',
     step: HACCP_STEPS.FINALIZATION,
-    ingredientsStatus: INGREDIENTS_STATUS.FROZEN, //TODO: applies to FROZEN
-    action: RECIPE_ACTIONS,
+    ingredientsStatus: INGREDIENTS_STATUS.FROZEN,
+    action: {
+      keep: ['Keep cold'],
+      use: ['Cold holding'],
+    }, //TODO: @Ecm83 crec que si es cooling no tindrà res a veure amb hot holding pel que he posat aquest valor
     hazzard: ['Growth of surviving bacteria', 'Germination of spores'],
     control: ['Rapid cooling'],
     procedure: ['Probing of food and recording times and temperatures'],
@@ -212,7 +215,7 @@ const haccps = [
   {
     name: 'Re-heating',
     step: HACCP_STEPS.FINALIZATION,
-    ingredientsStatus: Object.values(INGREDIENTS_STATUS),
+    ingredientsStatus: Object.values(INGREDIENTS_STATUS), //TODO: @Ecm83 review si això és correcte perquè si no, el rice with vegetables també tindrà re-heating.
     action: {
       use: ['Hot holding'],
     },

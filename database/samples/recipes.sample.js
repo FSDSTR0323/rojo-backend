@@ -1,44 +1,44 @@
+const INGREDIENTS_STATUS = require('../../utils/constants/ingredientsStatus');
+
 const recipes = [
   {
     name: 'Waldorf Salad',
-    haccp: [
-      { name: 'Chilled storage' },
-      { name: 'Preparation' },
-      { name: 'Display cold' },
-    ], //TODO: ensure that I'm getting all HACCPS when seeding,
-    recipeAction: {
+    ingredientsStatus: [INGREDIENTS_STATUS.CHILLED],
+    action: {
       keep: ['Keep cold'],
       use: ['Cold holding'],
     },
     image: '',
+    createdBy: {
+      nickname: 'braulioheadchef',
+    },
   },
   {
     name: 'Rice with Vegetables',
-    haccp: [
-      { name: 'Defrosting' },
-      { name: 'Dry storage' },
-      { name: 'Preparation' },
-      { name: 'Cooking' },
-    ], //TODO: ensure that I'm getting all HACCPS,
-    recipeAction: {
+    ingredientsStatus: [INGREDIENTS_STATUS.FROZEN, INGREDIENTS_STATUS.DRY],
+    action: {
       use: ['Hot holding'],
     },
     image: '',
+    createdBy: {
+      nickname: 'braulioheadchef',
+    },
   },
   {
     name: 'Wellington filet',
-    haccp: [
-      { name: 'Cold storage' },
-      { name: 'Dry storage' },
-      { name: 'Frozen storage' },
-      { name: 'Preparation' },
-      { name: 'Hot hold' },
-    ], //TODO: ensure that I'm getting all HACCPS,
-    recipeAction: {
+    ingredientsStatus: [
+      INGREDIENTS_STATUS.CHILLED,
+      INGREDIENTS_STATUS.DRY,
+      INGREDIENTS_STATUS.FROZEN,
+    ],
+    action: {
       keep: ['Freeze', 'Keep cold'],
       use: ['Hot holding', 'Cold holding'],
     },
     image: '',
+    createdBy: {
+      nickname: 'braulioheadchef',
+    },
   },
 ];
 

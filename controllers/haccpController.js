@@ -9,7 +9,7 @@ const getHaccps = async (req, res) => {
     filter = {
       ...filter,
       ingredientsStatus: {
-        $in: ingredientsStatus?.split(',') || [],
+        $in: ingredientsStatus?.split(','),
       },
     };
   }
