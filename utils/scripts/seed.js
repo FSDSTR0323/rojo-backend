@@ -6,6 +6,7 @@ const {
   Customer,
   Permission,
   Haccp,
+  Recipe,
 } = require('../../database/models');
 
 const {
@@ -14,6 +15,7 @@ const {
   RolesSamples,
   UsersSamples,
   HaccpsSamples,
+  RecipesSamples,
 } = require('../../database/samples');
 
 require('dotenv').config();
@@ -59,8 +61,6 @@ const seedRolesAndPermissions = async () => {
     console.log(`Seeded ${seededRoles.length} roles`);
   } catch (error) {
     console.log(error);
-  } finally {
-    console.log('Finished seeding Roles and Permissions');
   }
 };
 
@@ -87,30 +87,82 @@ const seedUsersAndCustomers = async () => {
     console.log(`Seeded ${seededUsers.length} users`);
   } catch (error) {
     console.log(error);
-  } finally {
-    console.log('Finished seeding Users and Customers');
   }
 };
 
 const seedHaccps = async () => {
   console.log('Clearing existing HACCPs');
   await Promise.all([Haccp.deleteMany()]);
+
+  const sortedHaccps = HaccpsSamples.map((haccp, index) => ({
+    ...haccp,
+    order: index,
+  }));
+
   try {
     console.log('Seeding HACCPS');
-    const seededHaccps = await Haccp.create(HaccpsSamples);
+    const seededHaccps = await Haccp.create(sortedHaccps);
     console.log(`Seeded ${seededHaccps.length} Haccp rules`);
   } catch (error) {
     console.log(error);
-  } finally {
-    console.log('Finished seeding Haccps');
+  }
+};
+
+const formatRecipeForMongo = async (recipe) => {
+  try {
+    const filter = {
+      ingredientsStatus: { $in: recipe.ingredientsStatus },
+      $or: [],
+    };
+
+    const { keep, use } = recipe.action;
+
+    if (keep && keep.length > 0)
+      filter.$or.push({ 'action.keep': { $in: keep } });
+
+    if (use && use.length > 0) filter.$or.push({ 'action.use': { $in: use } });
+
+    if (filter.$or.length === 0) delete filter.$or;
+
+    const haccps = await Haccp.find(filter).select('_id');
+
+    const createdByUserId = await User.findOne({
+      nickname: recipe.createdBy.nickname,
+    }).select('_id');
+
+    return {
+      name: recipe.name,
+      haccps,
+      action: recipe.action,
+      image: recipe.image,
+      createdBy: createdByUserId,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const seedRecipes = async () => {
+  console.log('Clearing existing Recipes');
+  await Promise.all([Recipe.deleteMany()]);
+
+  try {
+    const recipes = await Promise.all(
+      RecipesSamples.map((recipe) => formatRecipeForMongo(recipe))
+    );
+    const seededRecipes = await Recipe.create(recipes);
+    console.log(`Seeded ${seededRecipes.length} recipes`);
+  } catch (error) {
+    console.log(error);
   }
 };
 
 const seed = async () => {
   try {
-    await seedRolesAndPermissions();
-    await seedUsersAndCustomers();
+    //await seedRolesAndPermissions();
+    //await seedUsersAndCustomers();
     await seedHaccps();
+    await seedRecipes();
   } catch (error) {
     console.log(error);
   } finally {

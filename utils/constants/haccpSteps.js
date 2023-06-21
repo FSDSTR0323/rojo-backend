@@ -1,5 +1,5 @@
 const HACCP_STEPS = {
-  PREPREPARATION: 'Pre-preparation',
+  PRE_PREPARATION: 'Pre-preparation',
   PREPARATION: 'Preparation',
   FINALIZATION: 'Finalization',
 };
