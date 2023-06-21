@@ -159,8 +159,8 @@ const seedRecipes = async () => {
 
 const seed = async () => {
   try {
-    //await seedRolesAndPermissions();
-    //await seedUsersAndCustomers();
+    await seedRolesAndPermissions();
+    await seedUsersAndCustomers();
     await seedHaccps();
     await seedRecipes();
   } catch (error) {
