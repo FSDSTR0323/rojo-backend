@@ -31,6 +31,7 @@ const HaccpSchema = new Schema(
     frequency: [{ type: String, required: true }],
     limits: [{ type: String, required: true }],
     correctiveActions: [{ type: String, required: true }],
+    order: { type: Number, required: true }, //MongoDB doesn't store the documents by order, this is to ensure that documents are returned in the order we expect
     deletedAt: { type: Date },
   },
   {

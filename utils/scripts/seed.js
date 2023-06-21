@@ -94,9 +94,14 @@ const seedHaccps = async () => {
   console.log('Clearing existing HACCPs');
   await Promise.all([Haccp.deleteMany()]);
 
+  const sortedHaccps = HaccpsSamples.map((haccp, index) => ({
+    ...haccp,
+    order: index,
+  }));
+
   try {
     console.log('Seeding HACCPS');
-    const seededHaccps = await Haccp.create(HaccpsSamples);
+    const seededHaccps = await Haccp.create(sortedHaccps);
     console.log(`Seeded ${seededHaccps.length} Haccp rules`);
   } catch (error) {
     console.log(error);
@@ -154,8 +159,8 @@ const seedRecipes = async () => {
 
 const seed = async () => {
   try {
-    await seedRolesAndPermissions();
-    await seedUsersAndCustomers();
+    //await seedRolesAndPermissions();
+    //await seedUsersAndCustomers();
     await seedHaccps();
     await seedRecipes();
   } catch (error) {

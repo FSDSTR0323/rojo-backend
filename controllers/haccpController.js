@@ -1,16 +1,16 @@
 const { Haccp } = require('../database');
 
 const getHaccps = async (req, res) => {
-  const { ingredientsStatus } = req.query;
-  let { keep, use } = req.query;
+  let { ingredientsStatus, keep, use } = req.query;
 
-  const filter = {
-    ingredientsStatus: { $in: ingredientsStatus },
-    $or: [],
-  };
-
+  ingredientsStatus = ingredientsStatus?.split(',');
   keep = keep?.split(',');
   use = use?.split(',');
+
+  const filter = { $or: [] };
+
+  if (ingredientsStatus && ingredientsStatus.length > 0)
+    filter['ingredientsStatus'] = { $in: ingredientsStatus };
 
   if (keep && keep.length > 0)
     filter.$or.push({ 'action.keep': { $in: keep } });
@@ -19,39 +19,8 @@ const getHaccps = async (req, res) => {
 
   if (filter.$or.length === 0) delete filter.$or;
 
-  // let filter = {};
-
-  // if (ingredientsStatus) {
-  //   filter = {
-  //     ...filter,
-  //     ingredientsStatus: {
-  //       $in: ingredientsStatus?.split(','),
-  //     },
-  //   };
-  // }
-
-  // if (keep) {
-  //   filter = {
-  //     ...filter,
-  //     'action.keep': {
-  //       $in: keep.split(','),
-  //     },
-  //   };
-  // }
-
-  // if (use) {
-  //   filter = {
-  //     ...filter,
-  //     'action.use': {
-  //       $in: use.split(','),
-  //     },
-  //   };
-  // }
-
   try {
-    const haccps = await Haccp.find(filter);
-
-    console.log(filter);
+    const haccps = await Haccp.find(filter).sort('order');
 
     return res.status(200).send(haccps);
   } catch (error) {
