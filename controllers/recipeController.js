@@ -1,18 +1,28 @@
 const mongoose = require('mongoose');
 const { Recipe } = require('../database');
 
-const getRecipes = async () => {
-}
+const getRecipesForCustomer = async (req, res) => {
+  const { customerId } = req.jwtPayload;
 
-const addRecipe = async () => {}
+  const foundRecipes = await Recipe.find({
+    customer: customerId,
+  })
+    .select('name haccps action image createdBy modifiedBy')
+    .populate('haccps createdBy modifiedBy')
+    .exec();
+  return res.status(200).json(foundRecipes);
+};
 
-const updateRecipe = async () => {}
+const addRecipe = async (req, res) => {
+};
 
-const deleteRecipe = async () => {}
+const updateRecipe = async (req, res) => {};
+
+const deleteRecipe = async (req, res) => {};
 
 module.exports = {
-  getRecipes,
+  getRecipesForCustomer,
   addRecipe,
   updateRecipe,
-  deleteRecipe
+  deleteRecipe,
 };

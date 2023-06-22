@@ -161,9 +161,9 @@ const seedRecipeValidations = async () => {};
 
 const seed = async () => {
   try {
-    // await seedRolesAndPermissions();
-    // await seedUsersAndCustomers();
-    // await seedHaccps();
+    await seedRolesAndPermissions();
+    await seedUsersAndCustomers();
+    await seedHaccps();
     await seedRecipes();
     // await seedRecipeValidations();
   } catch (error) {

@@ -14,7 +14,7 @@ router.get(
   jwtMiddleware,
   userInfoMiddleware,
   checkPermissionsMiddleware(PERMISSIONS.RECIPE_READ),
-  recipeController.getRecipes
+  recipeController.getRecipesForCustomer
 );
 
 router.post(
