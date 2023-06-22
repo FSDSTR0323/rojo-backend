@@ -25,6 +25,7 @@ const UserSchema = new Schema(
     deletedAt: { type: Date },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     modifiedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

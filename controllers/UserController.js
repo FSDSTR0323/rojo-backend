@@ -297,11 +297,12 @@ const deleteUserInExistingCustomer = async (req, res) => {
     await User.findByIdAndUpdate(userId, {
       $set: {
         deletedAt: new Date(),
+        deletedBy: id,
       },
     });
     return res.status(200).send('User Deleted');
   } catch (error) {
-    return res.status(500).json({ error: { message: 'Error editing user' } });
+    return res.status(500).json({ error: { message: 'Error deleting user' } });
   }
 };
 

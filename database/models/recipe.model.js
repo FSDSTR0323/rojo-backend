@@ -21,6 +21,7 @@ const RecipeSchema = new Schema(
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     modifiedBy: { type: Schema.Types.ObjectId, ref: 'User' },
     deletedAt: { type: Date },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   },
   {
     timestamps: true,
