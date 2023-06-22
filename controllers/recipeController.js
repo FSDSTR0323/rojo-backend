@@ -14,6 +14,26 @@ const getRecipesForCustomer = async (req, res) => {
 };
 
 const addRecipe = async (req, res) => {
+  const { customerId, id } = req.jwtPayload;
+  const { name, haccps, action, imageUrl } = req.body;
+
+  try {
+    const newRecipe = new Recipe({
+      customer: customerId,
+      name,
+      haccps,
+      action,
+      imageUrl,
+      createdBy: id,
+    });
+
+    const savedRecipe = await newRecipe.save();
+    return res.status(201).json(savedRecipe);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: { message: 'Error adding a new recipe' } });
+  }
 };
 
 const updateRecipe = async (req, res) => {};

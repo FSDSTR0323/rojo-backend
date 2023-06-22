@@ -217,7 +217,7 @@ const addUserInExistingCustomer = async (req, res) => {
 
     const savedUser = await newUser.save();
     return res.status(201).json({
-      token: savedUser.generateJWT(),
+      token: savedUser.generateJWT(), //TODO: Do we really need to send the token of the new generated user? I think that only an OK would suffice
     });
   } catch (error) {
     return res

@@ -22,6 +22,7 @@ router.post(
   jwtMiddleware,
   userInfoMiddleware,
   checkPermissionsMiddleware(PERMISSIONS.RECIPE_CREATE),
+  checkRequiredParamsMiddleware(['name', 'haccps', 'action', 'imageUrl']),
   recipeController.addRecipe
 );
 
