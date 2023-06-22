@@ -17,7 +17,7 @@ const RecipeSchema = new Schema(
       ...ActionSchemaValidator,
       required: true,
     },
-    image: { type: String },
+    imageUrl: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     modifiedBy: { type: Schema.Types.ObjectId, ref: 'User' },
     deletedAt: { type: Date },

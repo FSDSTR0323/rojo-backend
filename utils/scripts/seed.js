@@ -134,7 +134,7 @@ const formatRecipeForMongo = async (recipe) => {
       name: recipe.name,
       haccps,
       action: recipe.action,
-      image: recipe.image,
+      imageUrl: recipe.imageUrl,
       createdBy: createdByUserId,
     };
   } catch (error) {
