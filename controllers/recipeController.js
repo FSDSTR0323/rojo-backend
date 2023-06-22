@@ -37,13 +37,25 @@ const addRecipe = async (req, res) => {
   }
 };
 
-const updateRecipe = async (req, res) => {};
+const updateRecipe = async (req, res) => {
+  const { id } = req.jwtPayload;
+  const recipeId = req.params.recipeId;
+};
 
 const deleteRecipe = async (req, res) => {
   const { id } = req.jwtPayload;
   const recipeId = req.params.recipeId;
 
   try {
+    const existingRecipe = await Recipe.findById(recipeId);
+
+    if (!existingRecipe)
+      return res.status(404).json({
+        error: {
+          message: 'recipeId does not exist',
+        },
+      });
+
     await Recipe.findByIdAndUpdate(recipeId, {
       $set: {
         deletedAt: new Date(),
