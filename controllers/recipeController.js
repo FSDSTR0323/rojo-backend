@@ -39,7 +39,24 @@ const addRecipe = async (req, res) => {
 
 const updateRecipe = async (req, res) => {};
 
-const deleteRecipe = async (req, res) => {};
+const deleteRecipe = async (req, res) => {
+  const { id } = req.jwtPayload;
+  const recipeId = req.params.recipeId;
+
+  try {
+    await Recipe.findByIdAndUpdate(recipeId, {
+      $set: {
+        deletedAt: new Date(),
+        deletedBy: id,
+      },
+    });
+    return res.status(200).send('Recipe Deleted');
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: { message: 'Error deleting recipe' } });
+  }
+};
 
 module.exports = {
   getRecipesForCustomer,
