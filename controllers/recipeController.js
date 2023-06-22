@@ -6,6 +6,7 @@ const getRecipesForCustomer = async (req, res) => {
 
   const foundRecipes = await Recipe.find({
     customer: customerId,
+    deletedAt: { $exists: false },
   })
     .select('name haccps action image createdBy modifiedBy')
     .populate('haccps createdBy modifiedBy')
