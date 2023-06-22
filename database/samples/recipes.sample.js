@@ -5,7 +5,6 @@ const recipes = [
     name: 'Waldorf Salad',
     ingredientsStatus: [INGREDIENTS_STATUS.CHILLED],
     action: {
-      keep: ['Keep cold'],
       use: ['Cold holding'],
     },
     image: '',
@@ -17,7 +16,7 @@ const recipes = [
     name: 'Rice with Vegetables',
     ingredientsStatus: [INGREDIENTS_STATUS.FROZEN, INGREDIENTS_STATUS.DRY],
     action: {
-      use: ['Hot holding'],
+      use: ['Hot holding', 'Re-heating'],
     },
     image: '',
     createdBy: {
@@ -32,8 +31,19 @@ const recipes = [
       INGREDIENTS_STATUS.FROZEN,
     ],
     action: {
-      keep: ['Freeze', 'Keep cold'],
+      keep: ['Freeze', 'Cooling'],
       use: ['Hot holding', 'Cold holding'],
+    },
+    image: '',
+    createdBy: {
+      nickname: 'braulioheadchef',
+    },
+  },
+  {
+    name: 'Chocolate ice-cream with strawberries',
+    ingredientsStatus: [INGREDIENTS_STATUS.CHILLED, INGREDIENTS_STATUS.FROZEN],
+    action: {
+      keep: ['Freeze'],
     },
     image: '',
     createdBy: {

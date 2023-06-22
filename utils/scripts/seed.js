@@ -116,12 +116,9 @@ const formatRecipeForMongo = async (recipe) => {
     };
 
     const { keep, use } = recipe.action;
-
     if (keep && keep.length > 0)
       filter.$or.push({ 'action.keep': { $in: keep } });
-
     if (use && use.length > 0) filter.$or.push({ 'action.use': { $in: use } });
-
     if (filter.$or.length === 0) delete filter.$or;
 
     const haccps = await Haccp.find(filter).select('_id');
@@ -157,12 +154,15 @@ const seedRecipes = async () => {
   }
 };
 
+const seedRecipeValidations = async () => {};
+
 const seed = async () => {
   try {
-    await seedRolesAndPermissions();
-    await seedUsersAndCustomers();
-    await seedHaccps();
-    await seedRecipes();
+    // await seedRolesAndPermissions();
+    // await seedUsersAndCustomers();
+    // await seedHaccps();
+    // await seedRecipes();
+    await seedRecipeValidations();
   } catch (error) {
     console.log(error);
   } finally {

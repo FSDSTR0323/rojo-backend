@@ -7,7 +7,10 @@ const haccps = [
     name: 'Chilled storage',
     step: HACCP_STEPS.PRE_PREPARATION,
     ingredientsStatus: INGREDIENTS_STATUS.CHILLED,
-    action: RECIPE_ACTIONS,
+    action: {
+      keep: ['Freeze'],
+      use: ['Hot holding', 'Cold holding', 'Re-heating'],
+    },
     hazzard: ['Growth of food poisoning bacteria'],
     control: [
       'Stored in fridge at temperatures that slow bacterial growth',
@@ -27,7 +30,10 @@ const haccps = [
     name: 'Chilled storage',
     step: HACCP_STEPS.PRE_PREPARATION,
     ingredientsStatus: INGREDIENTS_STATUS.CHILLED,
-    action: RECIPE_ACTIONS,
+    action: {
+      keep: ['Freeze'],
+      use: ['Hot holding', 'Cold holding', 'Re-heating'],
+    },
     hazzard: [
       'Contamination with food poisoning bacteria, physical and chemical contaminants',
     ],
@@ -76,7 +82,7 @@ const haccps = [
     step: HACCP_STEPS.PRE_PREPARATION,
     ingredientsStatus: INGREDIENTS_STATUS.FROZEN,
     action: {
-      keep: ['Keep cold'],
+      keep: ['Cooling'],
       use: ['Hot holding', 'Cold holding'],
     },
     hazzard: ['Growth of food poisoning bacteria in a high risk foods'],
@@ -97,7 +103,7 @@ const haccps = [
     step: HACCP_STEPS.PRE_PREPARATION,
     ingredientsStatus: INGREDIENTS_STATUS.FROZEN,
     action: {
-      keep: ['Keep cold'],
+      keep: ['Cooling'],
       use: ['Hot holding', 'Cold holding'],
     },
     hazzard: [
@@ -117,7 +123,7 @@ const haccps = [
     hazzard: [
       'Growth of food poisoning bacteria in high-risk foods left at ambient',
     ],
-    control: ['Restrict time high risk foods left at ambient '],
+    control: ['Restrict time high risk foods left at ambient'],
     procedure: ['Observation'],
     frequency: ['During the day'],
     limits: ['Max time room temperature =2 hours'],
@@ -162,9 +168,9 @@ const haccps = [
     step: HACCP_STEPS.FINALIZATION,
     ingredientsStatus: INGREDIENTS_STATUS.FROZEN,
     action: {
-      keep: ['Keep cold'],
+      keep: ['Cooling'],
       use: ['Cold holding'],
-    }, //TODO: @Ecm83 crec que si es cooling no tindrà res a veure amb hot holding pel que he posat aquest valor
+    },
     hazzard: ['Growth of surviving bacteria', 'Germination of spores'],
     control: ['Rapid cooling'],
     procedure: ['Probing of food and recording times and temperatures'],
@@ -215,9 +221,9 @@ const haccps = [
   {
     name: 'Re-heating',
     step: HACCP_STEPS.FINALIZATION,
-    ingredientsStatus: Object.values(INGREDIENTS_STATUS), //TODO: @Ecm83 review si això és correcte perquè si no, el rice with vegetables també tindrà re-heating.
+    ingredientsStatus: Object.values(INGREDIENTS_STATUS),
     action: {
-      use: ['Hot holding'],
+      use: ['Hot holding', 'Re-heating'],
     },
     hazzard: ['Survival of food poisoning bacteria'],
     control: ['Thorough cooking'],
