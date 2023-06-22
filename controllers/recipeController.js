@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 const { Recipe } = require('../database');
 
-const getRecipes = () => {}
+const getRecipes = async () => {
+}
 
-const addRecipe = () => {}
+const addRecipe = async () => {}
 
-const updateRecipe = () => {}
+const updateRecipe = async () => {}
 
-const deleteRecipe = () => {}
+const deleteRecipe = async () => {}
 
 module.exports = {
   getRecipes,

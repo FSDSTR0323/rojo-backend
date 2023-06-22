@@ -9,6 +9,7 @@ const Schema = mongoose.Schema;
 
 const RecipeSchema = new Schema(
   {
+    customer: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
     name: { type: String, required: true, trim: true },
     haccps: [{ type: Schema.Types.ObjectId, ref: 'Haccp', required: true }],
     action: {

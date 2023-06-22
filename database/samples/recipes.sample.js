@@ -1,7 +1,10 @@
 const INGREDIENTS_STATUS = require('../../utils/constants/ingredientsStatus');
 
+const customers = require('./customers.sample');
+
 const recipes = [
   {
+    customer: customers[0],
     name: 'Waldorf Salad',
     ingredientsStatus: [INGREDIENTS_STATUS.CHILLED],
     action: {
@@ -13,6 +16,7 @@ const recipes = [
     },
   },
   {
+    customer: customers[0],
     name: 'Rice with Vegetables',
     ingredientsStatus: [INGREDIENTS_STATUS.FROZEN, INGREDIENTS_STATUS.DRY],
     action: {
@@ -24,6 +28,7 @@ const recipes = [
     },
   },
   {
+    customer: customers[0],
     name: 'Wellington filet',
     ingredientsStatus: [
       INGREDIENTS_STATUS.CHILLED,
@@ -40,6 +45,7 @@ const recipes = [
     },
   },
   {
+    customer: customers[0],
     name: 'Chocolate ice-cream with strawberries',
     ingredientsStatus: [INGREDIENTS_STATUS.CHILLED, INGREDIENTS_STATUS.FROZEN],
     action: {

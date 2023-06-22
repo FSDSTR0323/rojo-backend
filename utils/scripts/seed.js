@@ -110,6 +110,8 @@ const seedHaccps = async () => {
 
 const formatRecipeForMongo = async (recipe) => {
   try {
+    const foundCustomer = await Customer.findOne(recipe.customer).select('_id');
+
     const filter = {
       ingredientsStatus: { $in: recipe.ingredientsStatus },
       $or: [],
@@ -128,6 +130,7 @@ const formatRecipeForMongo = async (recipe) => {
     }).select('_id');
 
     return {
+      customer: foundCustomer._id,
       name: recipe.name,
       haccps,
       action: recipe.action,
@@ -161,8 +164,8 @@ const seed = async () => {
     // await seedRolesAndPermissions();
     // await seedUsersAndCustomers();
     // await seedHaccps();
-    // await seedRecipes();
-    await seedRecipeValidations();
+    await seedRecipes();
+    // await seedRecipeValidations();
   } catch (error) {
     console.log(error);
   } finally {

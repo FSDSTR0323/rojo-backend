@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 const validationRecipeSchema = new Schema(
   {
+    customer: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
     recipe: { type: Schema.Types.ObjectId, ref: 'Recipe', required: true },
     steps: [
       {
