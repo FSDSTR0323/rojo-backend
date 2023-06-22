@@ -10,7 +10,7 @@ const recipes = [
     action: {
       use: ['Cold holding'],
     },
-    image:
+    imageUrl:
       'https://www.daringgourmet.com/wp-content/uploads/2020/01/Waldorf-Salad-9-square-edit-2.jpg',
     createdBy: {
       nickname: 'braulioheadchef',
@@ -23,7 +23,7 @@ const recipes = [
     action: {
       use: ['Hot holding', 'Re-heating'],
     },
-    image:
+    imageUrl:
       'https://tmbidigitalassetsazure.blob.core.windows.net/rms3-prod/attachments/37/1200x1200/Mixed-Veggies-and-Rice_EXPS_TOHEDSCODR21_179454_E04_28_2b.jpg',
     createdBy: {
       nickname: 'braulioheadchef',
@@ -41,7 +41,7 @@ const recipes = [
       keep: ['Freeze', 'Cooling'],
       use: ['Hot holding', 'Cold holding'],
     },
-    image:
+    imageUrl:
       'https://www.fleischglueck.de/wp-content/uploads/2020/08/filet_wellington_fleischglueck_magazin_teaser.jpg',
     createdBy: {
       nickname: 'braulioheadchef',
@@ -54,7 +54,7 @@ const recipes = [
     action: {
       keep: ['Freeze'],
     },
-    image:
+    imageUrl:
       'https://theunlikelybaker.com/wp-content/uploads/2021/02/Chocolate-Strawberry-Ice-Cream-Feature.jpg',
     createdBy: {
       nickname: 'braulioheadchef',
