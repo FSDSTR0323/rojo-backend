@@ -110,18 +110,17 @@ const seedHaccps = async () => {
 
 const formatRecipeForMongo = async (recipe) => {
   try {
+    const foundCustomer = await Customer.findOne(recipe.customer).select('_id');
+
     const filter = {
       ingredientsStatus: { $in: recipe.ingredientsStatus },
       $or: [],
     };
 
     const { keep, use } = recipe.action;
-
     if (keep && keep.length > 0)
       filter.$or.push({ 'action.keep': { $in: keep } });
-
     if (use && use.length > 0) filter.$or.push({ 'action.use': { $in: use } });
-
     if (filter.$or.length === 0) delete filter.$or;
 
     const haccps = await Haccp.find(filter).select('_id');
@@ -131,10 +130,11 @@ const formatRecipeForMongo = async (recipe) => {
     }).select('_id');
 
     return {
+      customer: foundCustomer._id,
       name: recipe.name,
       haccps,
       action: recipe.action,
-      image: recipe.image,
+      imageUrl: recipe.imageUrl,
       createdBy: createdByUserId,
     };
   } catch (error) {
@@ -157,12 +157,15 @@ const seedRecipes = async () => {
   }
 };
 
+const seedRecipeValidations = async () => {};
+
 const seed = async () => {
   try {
     await seedRolesAndPermissions();
     await seedUsersAndCustomers();
     await seedHaccps();
     await seedRecipes();
+    // await seedRecipeValidations();
   } catch (error) {
     console.log(error);
   } finally {

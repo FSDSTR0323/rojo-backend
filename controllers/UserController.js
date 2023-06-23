@@ -217,7 +217,7 @@ const addUserInExistingCustomer = async (req, res) => {
 
     const savedUser = await newUser.save();
     return res.status(201).json({
-      token: savedUser.generateJWT(),
+      token: savedUser.generateJWT(), //TODO: Do we really need to send the token of the new generated user? I think that only an OK would suffice
     });
   } catch (error) {
     return res
@@ -297,11 +297,12 @@ const deleteUserInExistingCustomer = async (req, res) => {
     await User.findByIdAndUpdate(userId, {
       $set: {
         deletedAt: new Date(),
+        deletedBy: id,
       },
     });
     return res.status(200).send('User Deleted');
   } catch (error) {
-    return res.status(500).json({ error: { message: 'Error editing user' } });
+    return res.status(500).json({ error: { message: 'Error deleting user' } });
   }
 };
 
