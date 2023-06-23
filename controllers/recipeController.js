@@ -8,7 +8,7 @@ const getRecipesForCustomer = async (req, res) => {
       customer: customerId,
       deletedAt: { $exists: false },
     })
-      .select('name haccps action image createdBy modifiedBy')
+      .select('name haccps action imageUrl createdBy modifiedBy')
       .populate({
         path: 'haccps',
         select: '-order',
