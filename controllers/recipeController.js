@@ -1,17 +1,20 @@
-const mongoose = require('mongoose');
 const { Recipe } = require('../database');
 
 const getRecipesForCustomer = async (req, res) => {
   const { customerId } = req.jwtPayload;
 
-  const foundRecipes = await Recipe.find({
-    customer: customerId,
-    deletedAt: { $exists: false },
-  })
-    .select('name haccps action image createdBy modifiedBy')
-    .populate('haccps createdBy modifiedBy')
-    .exec();
-  return res.status(200).json(foundRecipes);
+  try {
+    const foundRecipes = await Recipe.find({
+      customer: customerId,
+      deletedAt: { $exists: false },
+    })
+      .select('name haccps action image createdBy modifiedBy')
+      .populate('haccps createdBy modifiedBy')
+      .exec();
+    return res.status(200).json(foundRecipes);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
 };
 
 const addRecipe = async (req, res) => {
@@ -31,15 +34,33 @@ const addRecipe = async (req, res) => {
     const savedRecipe = await newRecipe.save();
     return res.status(201).json(savedRecipe);
   } catch (error) {
-    return res
-      .status(500)
-      .json({ error: { message: 'Error adding a new recipe' } });
+    return res.status(500).json(error);
   }
 };
 
 const updateRecipe = async (req, res) => {
-  const { id } = req.jwtPayload;
+  const { customerId, id } = req.jwtPayload;
   const recipeId = req.params.recipeId;
+  const updatedFields = req.body;
+
+  try {
+    const recipe = await Recipe.findOne({
+      _id: recipeId,
+      customer: customerId,
+    });
+
+    if (!recipe) {
+      return res.status(404).json({ error: { message: 'Recipe not found' } });
+    }
+
+    Object.assign(recipe, updatedFields, { modifiedBy: id });
+
+    await recipe.save();
+
+    return res.status(200).json(recipe);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
 };
 
 const deleteRecipe = async (req, res) => {
@@ -64,9 +85,7 @@ const deleteRecipe = async (req, res) => {
     });
     return res.status(200).send('Recipe Deleted');
   } catch (error) {
-    return res
-      .status(500)
-      .json({ error: { message: 'Error deleting recipe' } });
+    return res.status(500).json(error);
   }
 };
 
