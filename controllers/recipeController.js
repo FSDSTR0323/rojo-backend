@@ -9,7 +9,12 @@ const getRecipesForCustomer = async (req, res) => {
       deletedAt: { $exists: false },
     })
       .select('name haccps action image createdBy modifiedBy')
-      .populate('haccps createdBy modifiedBy')
+      .populate({
+        path: 'haccps',
+        select: '-order',
+        options: { sort: { order: 1 } },
+      })
+      .populate('createdBy modifiedBy')
       .exec();
     return res.status(200).json(foundRecipes);
   } catch (error) {

@@ -6,11 +6,11 @@ const validationRecipeSchema = new Schema(
   {
     customer: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
     recipe: { type: Schema.Types.ObjectId, ref: 'Recipe', required: true },
+    validationName: { type: String, required: true },
     steps: [
       {
-        haccpId: { type: Schema.Types.ObjectId, ref: 'Haccp', required: true },
+        haccp: { type: Schema.Types.ObjectId, ref: 'Haccp', required: true },
         valid: { type: Boolean, required: true },
-        correctiveActions: [{ type: String }],
         comment: { type: String },
       },
     ],
