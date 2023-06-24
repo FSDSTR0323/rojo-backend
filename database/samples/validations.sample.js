@@ -2,7 +2,7 @@ const INGREDIENTS_STATUS = require('../../utils/constants/ingredientsStatus');
 
 const customers = require('./customers.sample');
 
-const validationRecipes = [
+const validations = [
   {
     customer: customers[0],
     recipe: { name: 'Waldorf Salad' },
@@ -58,4 +58,4 @@ const validationRecipes = [
   },
 ];
 
-module.exports = validationRecipes;
+module.exports = validations;

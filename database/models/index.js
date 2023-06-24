@@ -7,6 +7,14 @@ const Permission = require('./permission.model');
 // Rules and recipes
 const Haccp = require('./haccp.model');
 const Recipe = require('./recipe.model');
-// const ValidationRecipe = require('./validationRecipe.model')
+const Validation = require('./validation.model');
 
-module.exports = { User, Role, Customer, Permission, Haccp, Recipe };
+module.exports = {
+  User,
+  Role,
+  Customer,
+  Permission,
+  Haccp,
+  Recipe,
+  Validation,
+};

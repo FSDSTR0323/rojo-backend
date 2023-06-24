@@ -7,6 +7,7 @@ const {
   Permission,
   Haccp,
   Recipe,
+  Validation,
 } = require('../../database/models');
 
 const {
@@ -16,6 +17,7 @@ const {
   UsersSamples,
   HaccpsSamples,
   RecipesSamples,
+  ValidationsSamples,
 } = require('../../database/samples');
 
 require('dotenv').config();
@@ -108,6 +110,21 @@ const seedHaccps = async () => {
   }
 };
 
+const seedData = async (model, data, formatFunction, modelName) => {
+  console.log(`Clearing existing ${modelName}`);
+  await model.deleteMany();
+
+  try {
+    const formattedData = await Promise.all(
+      data.map((item) => formatFunction(item))
+    );
+    const seededData = await model.create(formattedData);
+    console.log(`Seeded ${seededData.length} ${modelName}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const formatRecipeForMongo = async (recipe) => {
   try {
     const foundCustomer = await Customer.findOne(recipe.customer).select('_id');
@@ -143,21 +160,19 @@ const formatRecipeForMongo = async (recipe) => {
 };
 
 const seedRecipes = async () => {
-  console.log('Clearing existing Recipes');
-  await Promise.all([Recipe.deleteMany()]);
-
-  try {
-    const recipes = await Promise.all(
-      RecipesSamples.map((recipe) => formatRecipeForMongo(recipe))
-    );
-    const seededRecipes = await Recipe.create(recipes);
-    console.log(`Seeded ${seededRecipes.length} recipes`);
-  } catch (error) {
-    console.log(error);
-  }
+  await seedData(Recipe, RecipesSamples, formatRecipeForMongo, 'recipes');
 };
 
-const seedRecipeValidations = async () => {};
+const formatValidationForMongo = async () => {};
+
+const seedValidations = async () => {
+  await seedData(
+    Validation,
+    ValidationsSamples,
+    formatValidationForMongo,
+    'validations'
+  );
+};
 
 const seed = async () => {
   try {
@@ -165,7 +180,7 @@ const seed = async () => {
     await seedUsersAndCustomers();
     await seedHaccps();
     await seedRecipes();
-    // await seedRecipeValidations();
+    //await seedValidations();
   } catch (error) {
     console.log(error);
   } finally {
