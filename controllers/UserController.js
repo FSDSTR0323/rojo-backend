@@ -23,7 +23,15 @@ const registerCustomer = async (req, session) => {
 };
 
 const registerUser = async (req, customerId, session) => {
-  const { firstName, lastName, nickname, password, email, role } = req.body;
+  const {
+    firstName,
+    lastName,
+    nickname,
+    password,
+    email,
+    role,
+    profileImageUrl,
+  } = req.body;
 
   const existingUser = await User.findOne({ nickname }).session(session);
   const existingCustomer = await Customer.findById(customerId).session(session);
@@ -44,6 +52,7 @@ const registerUser = async (req, customerId, session) => {
     nickname,
     password,
     email: role === ROLES.OWNER ? existingCustomer.customerEmail : email,
+    profileImageUrl,
     role: existingRole._id,
   });
   const savedUser = await newUser.save({ session });
@@ -140,6 +149,7 @@ const getCurrentUserInfo = async (req, res) => {
     email: userData.email,
     role: userData.role.name,
     permissions: userData.role.permissions.map((permission) => permission.code),
+    profileImageUrl: userData.profileImageUrl,
   };
 
   return res.status(200).json(userInfo);
@@ -168,6 +178,7 @@ const getCustomerUsers = async (req, res) => {
         lastName: user.lastName,
         nickname: user.nickname,
         email: user.email,
+        profileImageUrl: user.profileImageUrl,
         role: user.role.name,
       };
     });
@@ -185,7 +196,15 @@ const getCustomerUsers = async (req, res) => {
 
 const addUserInExistingCustomer = async (req, res) => {
   const { customerId, id } = req.jwtPayload;
-  const { firstName, lastName, nickname, password, email, role } = req.body;
+  const {
+    firstName,
+    lastName,
+    nickname,
+    password,
+    email,
+    role,
+    profileImageUrl,
+  } = req.body;
 
   try {
     const existingUser = await User.findOne({ nickname });
@@ -212,13 +231,12 @@ const addUserInExistingCustomer = async (req, res) => {
       password,
       email,
       role: foundRole._id,
+      profileImageUrl,
       createdBy: id,
     });
 
     const savedUser = await newUser.save();
-    return res.status(201).json({
-      token: savedUser.generateJWT(), //TODO: Do we really need to send the token of the new generated user? I think that only an OK would suffice
-    });
+    return res.status(201).json(savedUser);
   } catch (error) {
     return res
       .status(500)
@@ -229,7 +247,7 @@ const addUserInExistingCustomer = async (req, res) => {
 const editUserInExistingCustomer = async (req, res) => {
   const { id } = req.jwtPayload;
   const userId = req.params.userId;
-  const { firstName, lastName, email, role } = req.body;
+  const { firstName, lastName, email, role, profileImageUrl } = req.body;
 
   try {
     const existingUser = await User.findById(userId).populate('role').exec();
@@ -259,6 +277,7 @@ const editUserInExistingCustomer = async (req, res) => {
           lastName: lastName || existingUser.lastName,
           email: email || existingUser.email,
           role: existingUser.role._id || existingRole._id,
+          profileImageUrl: profileImageUrl || existingUser.profileImageUrl,
           modifiedBy: id,
         },
       },
