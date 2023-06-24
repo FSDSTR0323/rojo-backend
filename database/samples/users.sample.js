@@ -9,6 +9,8 @@ const users = [
     nickname: 'pacoowner',
     password: '12345',
     email: 'paco.viruelas@gmail.com',
+    profileImageUrl:
+      'https://www.hoala.es/wp-content/uploads/2018/02/paco-conde-240.jpg',
     role: roles[0],
   },
   {
@@ -18,6 +20,8 @@ const users = [
     nickname: 'braulioheadchef',
     password: '12345',
     email: 'braulio.viruelas@gmail.com',
+    profileImageUrl:
+      'https://eurovision-spain.com/wp-content/uploads/2020/12/braulio.jpg',
     role: roles[1],
   },
   {
@@ -27,6 +31,8 @@ const users = [
     nickname: 'aureliochef',
     password: '12345',
     email: 'aurelio.mindundi@gmail.com',
+    profileImageUrl:
+      'https://pbs.twimg.com/profile_images/1361397450842464257/1SMekLxF_400x400.jpg',
     role: roles[2],
   },
 ];

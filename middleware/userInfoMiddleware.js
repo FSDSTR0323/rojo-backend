@@ -20,10 +20,6 @@ const userInfoMiddleware = async (req, res, next) => {
 
     req.userData = user;
 
-    // Logs
-    console.log('Username:', user.nickname)
-    console.log('Role:', user.role.name)
-    console.log('Permissions:', user.role.permissions.map(permission => permission.code))
     next();
   } catch (error) {
     return res.status(500).json({ error: { message: error.message } });
