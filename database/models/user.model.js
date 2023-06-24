@@ -17,6 +17,7 @@ const UserSchema = new Schema(
     nickname: { type: String, required: true, unique: true, trim: true },
     password: { type: String, required: true, trim: true },
     email: { type: String, trim: true }, //TODO: Validate email format
+    profileImageUrl: { type: String },
     role: {
       type: Schema.Types.ObjectId,
       ref: 'Role',
