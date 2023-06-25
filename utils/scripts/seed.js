@@ -93,21 +93,12 @@ const seedUsersAndCustomers = async () => {
 };
 
 const seedHaccps = async () => {
-  console.log('Deleting HACCPs');
-  await Promise.all([Haccp.deleteMany()]);
-
-  console.log('Seeding HACCPS...');
   const sortedHaccps = HaccpsSamples.map((haccp, index) => ({
     ...haccp,
     order: index,
   }));
 
-  try {
-    const seededHaccps = await Haccp.create(sortedHaccps);
-    console.log(`HACCPS: ${seededHaccps.length}`);
-  } catch (error) {
-    console.log(error);
-  }
+  await seedData(Haccp, sortedHaccps, null, 'haccp');
 };
 
 const seedData = async (model, data, formatFunction, modelName) => {
@@ -116,9 +107,15 @@ const seedData = async (model, data, formatFunction, modelName) => {
 
   try {
     console.log(`Seeding ${modelName.toUpperCase()}...`);
-    const formattedData = await Promise.all(
-      data.map((item) => formatFunction(item))
-    );
+
+    let formattedData = [];
+    if (formatFunction) {
+      formattedData = await Promise.all(
+        data.map((item) => formatFunction(item))
+      );
+    } else {
+      formattedData = data;
+    }
     const seededData = await model.create(formattedData);
     console.log(`${modelName.toUpperCase()}: ${seededData.length}`);
   } catch (error) {
