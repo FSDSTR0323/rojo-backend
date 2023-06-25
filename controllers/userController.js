@@ -9,7 +9,6 @@ const registerCustomer = async (req, session) => {
   if (existingCustomer)
     return { error: { status: 400, message: 'CIF already registered' } };
 
-  // Save Customer
   const newCustomer = new Customer({
     customerName,
     customerAddress,
