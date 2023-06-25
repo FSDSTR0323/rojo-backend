@@ -7,6 +7,7 @@ const {
   Permission,
   Haccp,
   Recipe,
+  Validation,
 } = require('../../database/models');
 
 const {
@@ -16,6 +17,7 @@ const {
   UsersSamples,
   HaccpsSamples,
   RecipesSamples,
+  ValidationsSamples,
 } = require('../../database/samples');
 
 require('dotenv').config();
@@ -39,14 +41,14 @@ main().catch((err) => console.log(err));
 
 const seedRolesAndPermissions = async () => {
   try {
-    console.log('Clearing existing Roles and Permissions');
+    console.log('Deleting ROLES & PERMISSIONS');
     await Promise.all([Permission.deleteMany(), Role.deleteMany()]);
 
-    console.log('Seeding Permissions');
+    console.log('Seeding PERMISSIONS...');
     const seededPermissions = await Permission.create(PermissionsSamples);
-    console.log(`Seeded ${seededPermissions.length} permissions`);
+    console.log(`PERMISSIONS: ${seededPermissions.length}`);
 
-    console.log('Seeding Roles');
+    console.log('Seeding ROLES...');
     const seededRoles = await Role.create(
       RolesSamples.map((role) => ({
         ...role,
@@ -58,7 +60,7 @@ const seedRolesAndPermissions = async () => {
         ),
       }))
     );
-    console.log(`Seeded ${seededRoles.length} roles`);
+    console.log(`ROLES: ${seededRoles.length}`);
   } catch (error) {
     console.log(error);
   }
@@ -66,14 +68,14 @@ const seedRolesAndPermissions = async () => {
 
 const seedUsersAndCustomers = async () => {
   try {
-    console.log('Clearing existing Customers and Users');
+    console.log('Deleting CUSTOMERS and USERS');
     await Promise.all([Customer.deleteMany(), User.deleteMany()]);
 
-    console.log('Seeding Customers');
+    console.log('Seeding CUSTOMERS...');
     const seededCustomers = await Customer.create(CustomersSamples);
-    console.log(`Seeded ${seededCustomers.length} customers`);
+    console.log(`CUSTOMERS: ${seededCustomers.length}`);
 
-    console.log('Seeding Users');
+    console.log('Seeding USERS...');
     const roles = await Role.find();
     const seededUsers = await User.create(
       UsersSamples.map((user) => ({
@@ -84,25 +86,38 @@ const seedUsersAndCustomers = async () => {
         role: roles.find((role) => role.name === user.role.name)?._id,
       }))
     );
-    console.log(`Seeded ${seededUsers.length} users`);
+    console.log(`USERS: ${seededUsers.length}`);
   } catch (error) {
     console.log(error);
   }
 };
 
 const seedHaccps = async () => {
-  console.log('Clearing existing HACCPs');
-  await Promise.all([Haccp.deleteMany()]);
-
   const sortedHaccps = HaccpsSamples.map((haccp, index) => ({
     ...haccp,
     order: index,
   }));
 
+  await seedData(Haccp, sortedHaccps, null, 'haccp');
+};
+
+const seedData = async (model, data, formatFunction, modelName) => {
+  console.log(`Deleting ${modelName.toUpperCase()}`);
+  await model.deleteMany();
+
   try {
-    console.log('Seeding HACCPS');
-    const seededHaccps = await Haccp.create(sortedHaccps);
-    console.log(`Seeded ${seededHaccps.length} Haccp rules`);
+    console.log(`Seeding ${modelName.toUpperCase()}...`);
+
+    let formattedData = [];
+    if (formatFunction) {
+      formattedData = await Promise.all(
+        data.map((item) => formatFunction(item))
+      );
+    } else {
+      formattedData = data;
+    }
+    const seededData = await model.create(formattedData);
+    console.log(`${modelName.toUpperCase()}: ${seededData.length}`);
   } catch (error) {
     console.log(error);
   }
@@ -143,33 +158,102 @@ const formatRecipeForMongo = async (recipe) => {
 };
 
 const seedRecipes = async () => {
-  console.log('Clearing existing Recipes');
-  await Promise.all([Recipe.deleteMany()]);
-
-  try {
-    const recipes = await Promise.all(
-      RecipesSamples.map((recipe) => formatRecipeForMongo(recipe))
-    );
-    const seededRecipes = await Recipe.create(recipes);
-    console.log(`Seeded ${seededRecipes.length} recipes`);
-  } catch (error) {
-    console.log(error);
-  }
+  await seedData(Recipe, RecipesSamples, formatRecipeForMongo, 'recipes');
 };
 
-const seedRecipeValidations = async () => {};
+const isArraySubset = (subset, superset) =>
+  subset.some((element) => superset.includes(element));
+
+const generateRandomBooleans = (validationStatus, length) => {
+  // Create an array to store the generated booleans
+  var booleanArray = [];
+
+  // If validationStatus is true, return an array of all true values
+  if (validationStatus) {
+    booleanArray = Array.from({ length }, () => true);
+  } else {
+    // Generate a random index between 0 and length
+    var randomIndex = Math.floor(Math.random() * length);
+
+    // Fill the array with true values except at the random index
+    booleanArray = Array.from({ length }, (_, i) =>
+      i === randomIndex ? false : true
+    );
+  }
+
+  return booleanArray;
+};
+
+const formatValidationForMongo = async (validation) => {
+  const customer = await Customer.findOne(validation.customer).select('_id');
+
+  const recipe = await Recipe.findOne({
+    customer: customer._id,
+    name: validation.recipe.name,
+  })
+    .select('_id haccps')
+    .populate('haccps');
+
+  const createdBy = await User.findOne(validation.createdBy).select('_id');
+
+  const filteredHaccps = recipe.haccps.filter(
+    (haccp) =>
+      validation.ingredientsStatus &&
+      haccp.ingredientsStatus &&
+      isArraySubset(validation.ingredientsStatus, haccp.ingredientsStatus) &&
+      ((validation.action.keep &&
+        haccp.action.keep &&
+        isArraySubset(validation.action.keep, haccp.action.keep)) ||
+        (validation.action.use &&
+          haccp.action.use &&
+          isArraySubset(validation.action.use, haccp.action.use)))
+  );
+
+  const validArray = generateRandomBooleans(
+    validation.validationStatus,
+    filteredHaccps.length
+  );
+
+  const steps = filteredHaccps.map((filteredHaccp, index) => {
+    return {
+      haccp: filteredHaccp._id,
+      valid: validArray[index],
+      comment: !validArray[index] ? 'lorem ipsum dolor sit amet' : undefined,
+    };
+  });
+
+  return {
+    customer,
+    recipe: recipe._id,
+    name: validation.name,
+    steps,
+    validationStatus: validation.validationStatus,
+    createdBy,
+  };
+};
+
+const seedValidations = async () => {
+  await seedData(
+    Validation,
+    ValidationsSamples,
+    formatValidationForMongo,
+    'validations'
+  );
+};
 
 const seed = async () => {
   try {
+    console.log('INITIATING SEEDING PROCESS');
     await seedRolesAndPermissions();
     await seedUsersAndCustomers();
     await seedHaccps();
     await seedRecipes();
-    // await seedRecipeValidations();
+    await seedValidations();
   } catch (error) {
     console.log(error);
   } finally {
     mongoose.connection.close();
+    console.log('FINISHED SEEDING PROCESS');
   }
 };
 
