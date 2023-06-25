@@ -53,21 +53,21 @@ router.post(
     'password',
     'role',
   ]),
-  userController.addUserInExistingCustomer
+  userController.addUser
 );
 router.put(
   '/:userId',
   jwtMiddleware,
   userInfoMiddleware,
   checkPermissionsMiddleware(PERMISSIONS.USER_UPDATE),
-  userController.editUserInExistingCustomer
+  userController.editUser
 );
 router.delete(
   '/:userId',
   jwtMiddleware,
   userInfoMiddleware,
   checkPermissionsMiddleware(PERMISSIONS.USER_DELETE),
-  userController.deleteUserInExistingCustomer
+  userController.deleteUser
 );
 
 module.exports = router;

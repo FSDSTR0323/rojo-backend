@@ -194,7 +194,7 @@ const getCustomerUsers = async (req, res) => {
   }
 };
 
-const addUserInExistingCustomer = async (req, res) => {
+const addUser = async (req, res) => {
   const { customerId, id } = req.jwtPayload;
   const {
     firstName,
@@ -244,7 +244,7 @@ const addUserInExistingCustomer = async (req, res) => {
   }
 };
 
-const editUserInExistingCustomer = async (req, res) => {
+const editUser = async (req, res) => {
   const { id } = req.jwtPayload;
   const userId = req.params.userId;
   const { firstName, lastName, email, role, profileImageUrl } = req.body;
@@ -290,7 +290,7 @@ const editUserInExistingCustomer = async (req, res) => {
   }
 };
 
-const deleteUserInExistingCustomer = async (req, res) => {
+const deleteUser = async (req, res) => {
   const { id } = req.jwtPayload;
   const userId = req.params.userId;
 
@@ -330,7 +330,7 @@ module.exports = {
   login,
   getCurrentUserInfo,
   getCustomerUsers,
-  addUserInExistingCustomer,
-  editUserInExistingCustomer,
-  deleteUserInExistingCustomer,
+  addUser,
+  editUser,
+  deleteUser,
 };
