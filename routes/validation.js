@@ -3,16 +3,16 @@ const router = express.Router();
 const jwtMiddleware = require('../middleware/jwtMiddleware');
 const userInfoMiddleware = require('../middleware/userInfoMiddleware');
 const checkPermissionsMiddleware = require('../middleware/checkPermissionsMiddleware');
+const checkRequiredParamsMiddleware = require('../middleware/checkRequiredParamsMiddleware');
 
 const PERMISSIONS = require('../utils/constants/permissions');
 
-const haccpController = require('../controllers/haccpController');
+const validationController = require('../controllers/validationController');
 
 router.get(
   '/',
   jwtMiddleware,
-  checkPermissionsMiddleware(PERMISSIONS.HACCP_READ),
-  haccpController.getHaccps
+  checkPermissionsMiddleware(PERMISSIONS.VALIDATION_READ)
 );
 
 module.exports = router;

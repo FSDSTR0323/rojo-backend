@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const jwtMiddleware = require('../middleware/jwtMiddleware');
-const userInfoMiddleware = require('../middleware/userInfoMiddleware');
 const checkPermissionsMiddleware = require('../middleware/checkPermissionsMiddleware');
 const checkRequiredParamsMiddleware = require('../middleware/checkRequiredParamsMiddleware');
 
@@ -12,7 +11,6 @@ const recipeController = require('../controllers/recipeController');
 router.get(
   '/',
   jwtMiddleware,
-  userInfoMiddleware,
   checkPermissionsMiddleware(PERMISSIONS.RECIPE_READ),
   recipeController.getRecipesForCustomer
 );
@@ -20,7 +18,6 @@ router.get(
 router.post(
   '/',
   jwtMiddleware,
-  userInfoMiddleware,
   checkPermissionsMiddleware(PERMISSIONS.RECIPE_CREATE),
   checkRequiredParamsMiddleware(['name', 'haccps', 'action', 'imageUrl']),
   recipeController.addRecipe
@@ -29,7 +26,6 @@ router.post(
 router.put(
   '/:recipeId',
   jwtMiddleware,
-  userInfoMiddleware,
   checkPermissionsMiddleware(PERMISSIONS.RECIPE_UPDATE),
   recipeController.updateRecipe
 );
@@ -37,7 +33,6 @@ router.put(
 router.delete(
   '/:recipeId',
   jwtMiddleware,
-  userInfoMiddleware,
   checkPermissionsMiddleware(PERMISSIONS.RECIPE_DELETE),
   recipeController.deleteRecipe
 );
