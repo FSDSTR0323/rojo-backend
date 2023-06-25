@@ -41,14 +41,14 @@ main().catch((err) => console.log(err));
 
 const seedRolesAndPermissions = async () => {
   try {
-    console.log('Clearing existing Roles and Permissions');
+    console.log('Deleting ROLES & PERMISSIONS');
     await Promise.all([Permission.deleteMany(), Role.deleteMany()]);
 
-    console.log('Seeding Permissions');
+    console.log('Seeding PERMISSIONS...');
     const seededPermissions = await Permission.create(PermissionsSamples);
-    console.log(`Seeded ${seededPermissions.length} permissions`);
+    console.log(`PERMISSIONS: ${seededPermissions.length}`);
 
-    console.log('Seeding Roles');
+    console.log('Seeding ROLES...');
     const seededRoles = await Role.create(
       RolesSamples.map((role) => ({
         ...role,
@@ -60,7 +60,7 @@ const seedRolesAndPermissions = async () => {
         ),
       }))
     );
-    console.log(`Seeded ${seededRoles.length} roles`);
+    console.log(`ROLES: ${seededRoles.length}`);
   } catch (error) {
     console.log(error);
   }
@@ -68,14 +68,14 @@ const seedRolesAndPermissions = async () => {
 
 const seedUsersAndCustomers = async () => {
   try {
-    console.log('Clearing existing Customers and Users');
+    console.log('Deleting CUSTOMERS and USERS');
     await Promise.all([Customer.deleteMany(), User.deleteMany()]);
 
-    console.log('Seeding Customers');
+    console.log('Seeding CUSTOMERS...');
     const seededCustomers = await Customer.create(CustomersSamples);
-    console.log(`Seeded ${seededCustomers.length} customers`);
+    console.log(`CUSTOMERS: ${seededCustomers.length}`);
 
-    console.log('Seeding Users');
+    console.log('Seeding USERS...');
     const roles = await Role.find();
     const seededUsers = await User.create(
       UsersSamples.map((user) => ({
@@ -86,40 +86,41 @@ const seedUsersAndCustomers = async () => {
         role: roles.find((role) => role.name === user.role.name)?._id,
       }))
     );
-    console.log(`Seeded ${seededUsers.length} users`);
+    console.log(`USERS: ${seededUsers.length}`);
   } catch (error) {
     console.log(error);
   }
 };
 
 const seedHaccps = async () => {
-  console.log('Clearing existing HACCPs');
+  console.log('Deleting HACCPs');
   await Promise.all([Haccp.deleteMany()]);
 
+  console.log('Seeding HACCPS...');
   const sortedHaccps = HaccpsSamples.map((haccp, index) => ({
     ...haccp,
     order: index,
   }));
 
   try {
-    console.log('Seeding HACCPS');
     const seededHaccps = await Haccp.create(sortedHaccps);
-    console.log(`Seeded ${seededHaccps.length} Haccp rules`);
+    console.log(`HACCPS: ${seededHaccps.length}`);
   } catch (error) {
     console.log(error);
   }
 };
 
 const seedData = async (model, data, formatFunction, modelName) => {
-  console.log(`Clearing existing ${modelName}`);
+  console.log(`Deleting ${modelName.toUpperCase()}`);
   await model.deleteMany();
 
   try {
+    console.log(`Seeding ${modelName.toUpperCase()}...`);
     const formattedData = await Promise.all(
       data.map((item) => formatFunction(item))
     );
     const seededData = await model.create(formattedData);
-    console.log(`Seeded ${seededData.length} ${modelName}`);
+    console.log(`${modelName.toUpperCase()}: ${seededData.length}`);
   } catch (error) {
     console.log(error);
   }
@@ -245,6 +246,7 @@ const seedValidations = async () => {
 
 const seed = async () => {
   try {
+    console.log('INITIATING SEEDING PROCESS');
     await seedRolesAndPermissions();
     await seedUsersAndCustomers();
     await seedHaccps();
@@ -254,6 +256,7 @@ const seed = async () => {
     console.log(error);
   } finally {
     mongoose.connection.close();
+    console.log('FINISHED SEEDING PROCESS');
   }
 };
 
