@@ -163,7 +163,76 @@ const seedRecipes = async () => {
   await seedData(Recipe, RecipesSamples, formatRecipeForMongo, 'recipes');
 };
 
-const formatValidationForMongo = async () => {};
+const isArraySubset = (subset, superset) =>
+  subset.some((element) => superset.includes(element));
+
+const generateRandomBooleans = (validationStatus, length) => {
+  // Create an array to store the generated booleans
+  var booleanArray = [];
+
+  // If validationStatus is true, return an array of all true values
+  if (validationStatus) {
+    booleanArray = Array.from({ length }, () => true);
+  } else {
+    // Generate a random index between 0 and length
+    var randomIndex = Math.floor(Math.random() * length);
+
+    // Fill the array with true values except at the random index
+    booleanArray = Array.from({ length }, (_, i) =>
+      i === randomIndex ? false : true
+    );
+  }
+
+  return booleanArray;
+};
+
+const formatValidationForMongo = async (validation) => {
+  const customer = await Customer.findOne(validation.customer).select('_id');
+
+  const recipe = await Recipe.findOne({
+    customer: customer._id,
+    name: validation.recipe.name,
+  })
+    .select('_id haccps')
+    .populate('haccps');
+
+  const createdBy = await User.findOne(validation.createdBy).select('_id');
+
+  const filteredHaccps = recipe.haccps.filter(
+    (haccp) =>
+      validation.ingredientsStatus &&
+      haccp.ingredientsStatus &&
+      isArraySubset(validation.ingredientsStatus, haccp.ingredientsStatus) &&
+      ((validation.action.keep &&
+        haccp.action.keep &&
+        isArraySubset(validation.action.keep, haccp.action.keep)) ||
+        (validation.action.use &&
+          haccp.action.use &&
+          isArraySubset(validation.action.use, haccp.action.use)))
+  );
+
+  const validArray = generateRandomBooleans(
+    validation.validationStatus,
+    filteredHaccps.length
+  );
+
+  const steps = filteredHaccps.map((filteredHaccp, index) => {
+    return {
+      haccp: filteredHaccp._id,
+      valid: validArray[index],
+      comment: !validArray[index] ? 'lorem ipsum dolor sit amet' : undefined,
+    };
+  });
+
+  return {
+    customer,
+    recipe: recipe._id,
+    name: validation.name,
+    steps,
+    validationStatus: validation.validationStatus,
+    createdBy,
+  };
+};
 
 const seedValidations = async () => {
   await seedData(
@@ -180,7 +249,7 @@ const seed = async () => {
     await seedUsersAndCustomers();
     await seedHaccps();
     await seedRecipes();
-    //await seedValidations();
+    await seedValidations();
   } catch (error) {
     console.log(error);
   } finally {

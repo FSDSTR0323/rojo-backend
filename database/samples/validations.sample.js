@@ -11,6 +11,7 @@ const validations = [
     action: {
       use: ['Cold holding'],
     },
+    validationStatus: true,
     createdBy: {
       nickname: 'braulioheadchef',
     },
@@ -23,6 +24,7 @@ const validations = [
     action: {
       use: ['Hot holding'],
     },
+    validationStatus: false,
     createdBy: {
       nickname: 'braulioheadchef',
     },
@@ -40,6 +42,7 @@ const validations = [
       keep: ['Freeze'],
       use: ['Hot holding'],
     },
+    validationStatus: false,
     createdBy: {
       nickname: 'braulioheadchef',
     },
@@ -52,6 +55,7 @@ const validations = [
     action: {
       keep: ['Freeze'],
     },
+    validationStatus: true,
     createdBy: {
       nickname: 'braulioheadchef',
     },
