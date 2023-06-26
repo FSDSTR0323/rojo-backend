@@ -42,11 +42,7 @@ const permissions = [
     description: 'Allows to check all validations',
   },
   {
-    code: PERMISSIONS.VALIDATION_UPDATE,
-    description: 'Allows to modify a validation',
-  },
-  {
-    code: PERMISSIONS.VALIDATION_UPDATE,
+    code: PERMISSIONS.VALIDATION_DELETE,
     description: 'Allows to delete a validation',
   },
   {
