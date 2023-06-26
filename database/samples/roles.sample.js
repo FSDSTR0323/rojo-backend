@@ -1,8 +1,6 @@
 const ROLES = require('../../utils/constants/roles');
 const permissions = require('./permissions.sample');
 
-console.log(permissions)
-
 const roles = [
   {
     name: ROLES.OWNER,
