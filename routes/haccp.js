@@ -11,6 +11,7 @@ const haccpController = require('../controllers/haccpController');
 router.get(
   '/',
   jwtMiddleware,
+  userInfoMiddleware,
   checkPermissionsMiddleware(PERMISSIONS.HACCP_READ),
   haccpController.getHaccps
 );
