@@ -11,7 +11,6 @@ const getRecipesForCustomer = async (req, res) => {
       .select('name haccps action imageUrl createdBy modifiedBy')
       .populate({
         path: 'haccps',
-        select: '-order',
         options: { sort: { order: 1 } },
       })
       .populate('createdBy modifiedBy')
