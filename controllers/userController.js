@@ -245,6 +245,7 @@ const addUser = async (req, res) => {
       nickname: savedUser.nickname,
       email: savedUser.nickname,
       role: savedUser.role.name,
+      profileImageUrl: savedUser.profileImageUrl,
       permissions: savedUser.role.permissions.map(
         (permission) => permission.code
       ),
