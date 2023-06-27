@@ -1,58 +1,43 @@
 const { Recipe } = require('../database');
 
 const getRecipeList = async (customerId) => {
-  console.log('getRecipeList');
+  const recipeList = await Recipe.find({
+    customer: customerId,
+  }).select('name imageUrl');
+  return recipeList;
 };
 
 const getRecipeById = async (customerId, recipeId) => {
-  try {
-    const recipe = await Recipe.find({
-      customer: customerId,
-      _id: recipeId,
+  const recipe = await Recipe.find({
+    customer: customerId,
+    _id: recipeId,
+  })
+    .select('name haccps action imageUrl createdBy modifiedBy')
+    .populate({
+      path: 'haccps',
+      options: { sort: { order: 1 } },
     })
-      .select('name haccps action imageUrl createdBy modifiedBy')
-      .populate({
-        path: 'haccps',
-        options: { sort: { order: 1 } },
-      })
-      .populate('createdBy modifiedBy')
-      .exec();
+    .populate('createdBy modifiedBy')
+    .exec();
 
-    console.log(recipe);
-    return recipe;
-  } catch (error) {
-    return error;
-  }
+  return recipe;
 };
 
 const getRecipes = async (req, res) => {
   const { customerId } = req.jwtPayload;
   const recipeId = req.params.recipeId;
 
-  if (recipeId) {
-    const recipe = await getRecipeById(customerId, recipeId);
-    return res.status(200).json(recipe);
-  } else {
-    const recipeList = await getRecipeList(customerId);
-    return res.status(500).json(recipeList);
+  try {
+    if (recipeId) {
+      const recipe = await getRecipeById(customerId, recipeId);
+      return res.status(200).json(recipe);
+    } else {
+      const recipeList = await getRecipeList(customerId);
+      return res.status(500).json(recipeList);
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
-
-  // try {
-  //   const foundRecipes = await Recipe.find({
-  //     customer: customerId,
-  //     deletedAt: { $exists: false },
-  //   })
-  //     .select('name haccps action imageUrl createdBy modifiedBy')
-  //     .populate({
-  //       path: 'haccps',
-  //       options: { sort: { order: 1 } },
-  //     })
-  //     .populate('createdBy modifiedBy')
-  //     .exec();
-  //   return res.status(200).json(foundRecipes);
-  // } catch (error) {
-  //   return res.status(500).json(error);
-  // }
 };
 
 const addRecipe = async (req, res) => {
@@ -72,7 +57,7 @@ const addRecipe = async (req, res) => {
     const savedRecipe = await newRecipe.save();
     return res.status(201).json(savedRecipe);
   } catch (error) {
-    return res.status(500).json(error);
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -97,7 +82,7 @@ const updateRecipe = async (req, res) => {
 
     return res.status(200).json(recipe);
   } catch (error) {
-    return res.status(500).json(error);
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -123,7 +108,7 @@ const deleteRecipe = async (req, res) => {
     });
     return res.status(200).send('Recipe Deleted');
   } catch (error) {
-    return res.status(500).json(error);
+    return res.status(500).json({ error: error.message });
   }
 };
 
