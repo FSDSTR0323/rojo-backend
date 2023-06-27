@@ -5,10 +5,12 @@ const userRouter = require('./user');
 const haccpRouter = require('./haccp');
 const recipeRouter = require('./recipe');
 const validationRouter = require('./validation');
+const customerRouter = require('./customer');
 
 router.use('/user', userRouter);
 router.use('/haccp', haccpRouter);
 router.use('/recipe', recipeRouter);
 router.use('/validation', validationRouter);
+router.use('/customer', customerRouter);
 
 module.exports = router;
