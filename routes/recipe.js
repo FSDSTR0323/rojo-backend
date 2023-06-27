@@ -10,11 +10,11 @@ const PERMISSIONS = require('../utils/constants/permissions');
 const recipeController = require('../controllers/recipeController');
 
 router.get(
-  '/',
+  '/:recipeId?',
   jwtMiddleware,
   userInfoMiddleware,
   checkPermissionsMiddleware(PERMISSIONS.RECIPE_READ),
-  recipeController.getRecipesForCustomer
+  recipeController.getRecipes
 );
 
 router.post(

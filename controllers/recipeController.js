@@ -1,12 +1,14 @@
 const { Recipe } = require('../database');
 
-const getRecipesForCustomer = async (req, res) => {
-  const { customerId } = req.jwtPayload;
+const getRecipeList = async (customerId) => {
+  console.log('getRecipeList');
+};
 
+const getRecipeById = async (customerId, recipeId) => {
   try {
-    const foundRecipes = await Recipe.find({
+    const recipe = await Recipe.find({
       customer: customerId,
-      deletedAt: { $exists: false },
+      _id: recipeId,
     })
       .select('name haccps action imageUrl createdBy modifiedBy')
       .populate({
@@ -15,10 +17,42 @@ const getRecipesForCustomer = async (req, res) => {
       })
       .populate('createdBy modifiedBy')
       .exec();
-    return res.status(200).json(foundRecipes);
+
+    console.log(recipe);
+    return recipe;
   } catch (error) {
-    return res.status(500).json(error);
+    return error;
   }
+};
+
+const getRecipes = async (req, res) => {
+  const { customerId } = req.jwtPayload;
+  const recipeId = req.params.recipeId;
+
+  if (recipeId) {
+    const recipe = await getRecipeById(customerId, recipeId);
+    return res.status(200).json(recipe);
+  } else {
+    const recipeList = await getRecipeList(customerId);
+    return res.status(500).json(recipeList);
+  }
+
+  // try {
+  //   const foundRecipes = await Recipe.find({
+  //     customer: customerId,
+  //     deletedAt: { $exists: false },
+  //   })
+  //     .select('name haccps action imageUrl createdBy modifiedBy')
+  //     .populate({
+  //       path: 'haccps',
+  //       options: { sort: { order: 1 } },
+  //     })
+  //     .populate('createdBy modifiedBy')
+  //     .exec();
+  //   return res.status(200).json(foundRecipes);
+  // } catch (error) {
+  //   return res.status(500).json(error);
+  // }
 };
 
 const addRecipe = async (req, res) => {
@@ -94,7 +128,7 @@ const deleteRecipe = async (req, res) => {
 };
 
 module.exports = {
-  getRecipesForCustomer,
+  getRecipes,
   addRecipe,
   updateRecipe,
   deleteRecipe,
