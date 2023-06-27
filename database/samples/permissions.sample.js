@@ -48,7 +48,15 @@ const permissions = [
   {
     code: PERMISSIONS.HACCP_READ,
     description: 'Allows to read through the list of HACCPs',
-  }
+  },
+  {
+    code: PERMISSIONS.CUSTOMER_READ,
+    description: 'Allows to see current customer information',
+  },
+  {
+    code: PERMISSIONS.CUSTOMER_UPDATE,
+    description: 'Allows to edit customer information',
+  },
 ];
 
 module.exports = permissions;

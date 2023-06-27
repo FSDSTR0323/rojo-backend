@@ -11,6 +11,8 @@ const PERMISSIONS = {
   VALIDATION_READ: 'validation.read',
   VALIDATION_DELETE: 'validation.delete',
   HACCP_READ: 'haccp.read',
+  CUSTOMER_READ: 'customer.read',
+  CUSTOMER_UPDATE: 'customer.update',
 };
 
 module.exports = PERMISSIONS;
