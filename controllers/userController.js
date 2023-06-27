@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { User, Customer, Role } = require('../database');
-const { ROLES } = require('../utils/constants/roles');
+const ROLES = require('../utils/constants/roles');
 
 const registerCustomer = async (req, session) => {
   const { customerName, customerAddress, email, customerCif } = req.body;
@@ -235,7 +235,23 @@ const addUser = async (req, res) => {
     });
 
     const savedUser = await newUser.save();
-    return res.status(201).json(savedUser);
+    await savedUser.populate('customer role createdBy');
+    await savedUser.role.populate('permissions');
+
+    const formattedUser = {
+      customer: savedUser.customer.customerName,
+      firstName: savedUser.firstName,
+      lastName: savedUser.lastName,
+      nickname: savedUser.nickname,
+      email: savedUser.nickname,
+      role: savedUser.role.name,
+      permissions: savedUser.role.permissions.map(
+        (permission) => permission.code
+      ),
+      createdBy: savedUser.createdBy.nickname,
+    };
+
+    return res.status(201).json(formattedUser);
   } catch (error) {
     return res
       .status(500)
