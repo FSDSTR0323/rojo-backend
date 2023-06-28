@@ -33,7 +33,7 @@ const getRecipes = async (req, res) => {
       return res.status(200).json(recipe);
     } else {
       const recipeList = await getRecipeList(customerId);
-      return res.status(500).json(recipeList);
+      return res.status(200).json(recipeList);
     }
   } catch (error) {
     return res.status(500).json({ error: error.message });
