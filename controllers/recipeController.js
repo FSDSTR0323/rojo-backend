@@ -8,7 +8,7 @@ const getRecipeList = async (customerId) => {
 };
 
 const getRecipeById = async (customerId, recipeId) => {
-  const recipe = await Recipe.find({
+  const recipe = await Recipe.findOne({
     customer: customerId,
     _id: recipeId,
   })
