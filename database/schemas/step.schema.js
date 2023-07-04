@@ -8,22 +8,16 @@ const StepSchema = new Schema(
     correctiveActions: {
       type: [String],
       validate: {
-        validator: function () {
-          return (
-            !this.valid ||
-            (this.correctiveActions && this.correctiveActions.length > 0)
-          );
+        validator: function (value) {
+          return this.valid || value.length > 0;
         },
         message: 'Corrective actions are required for invalid steps.',
       },
     },
     comment: {
       type: String,
-      validate: {
-        validator: function () {
-          return !this.valid || this.comment;
-        },
-        message: 'A comment is required for invalid steps.',
+      required: function () {
+        return !this.valid;
       },
     },
   },
