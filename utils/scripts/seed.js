@@ -215,11 +215,15 @@ const formatValidationForMongo = async (validation) => {
   );
 
   const steps = filteredHaccps.map((filteredHaccp, index) => {
-    return {
+    const step = {
       haccp: filteredHaccp._id,
       valid: validArray[index],
       comment: !validArray[index] ? 'lorem ipsum dolor sit amet' : undefined,
     };
+
+    if (!step.valid) step.correctiveActions = filteredHaccp.correctiveActions;
+
+    return step;
   });
 
   return {

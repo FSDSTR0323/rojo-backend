@@ -35,6 +35,17 @@ const users = [
       'https://pbs.twimg.com/profile_images/1361397450842464257/1SMekLxF_400x400.jpg',
     role: roles[2],
   },
+  {
+    customer: customers[0],
+    firstName: 'Antonio',
+    lastName: 'Recio',
+    nickname: 'arecio',
+    password: '12345',
+    email: 'mayorista@nolimpiopescado.com',
+    profileImageUrl:
+      'http://res.cloudinary.com/dzfvt7rrp/image/upload/v1687806886/antoniorecio_lo1jkq.jpg',
+    role: roles[2],
+  },
 ];
 
 module.exports = users;
