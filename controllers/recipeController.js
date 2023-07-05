@@ -1,4 +1,5 @@
 const { Recipe } = require('../database');
+const cloudinary = require('cloudinary');
 
 const getRecipeList = async (customerId) => {
   const recipeList = await Recipe.find({
@@ -45,12 +46,14 @@ const addRecipe = async (req, res) => {
   const { name, haccps, action, imageUrl } = req.body;
 
   try {
+    const cloudinaryResponse = await cloudinary.uploader.upload(imageUrl);
+
     const newRecipe = new Recipe({
       customer: customerId,
       name,
       haccps,
       action,
-      imageUrl,
+      imageUrl: cloudinaryResponse.secure_url,
       createdBy: id,
     });
 
@@ -77,6 +80,11 @@ const updateRecipe = async (req, res) => {
     }
 
     Object.assign(recipe, updatedFields, { modifiedBy: id });
+
+    if (updatedFields.imageUrl) {
+      const cloudinaryResponse = await cloudinary.uploader.upload(updatedFields.imageUrl);
+      recipe.imageUrl = cloudinaryResponse.secure_url;
+    }
 
     await recipe.save();
 
