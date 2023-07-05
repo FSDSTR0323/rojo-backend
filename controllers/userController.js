@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { User, Customer, Role } = require('../database');
 const ROLES = require('../utils/constants/roles');
+const cloudinary = require('cloudinary');
 
 const registerCustomer = async (req, session) => {
   const { customerName, customerAddress, email, customerCif } = req.body;
@@ -61,13 +62,21 @@ const registerUser = async (req, customerId, session) => {
 };
 
 const registerCustomerAndUser = async (req, res) => {
-  const session = await mongoose.startSession(); // using sessions to make sure we only save a customer if a user is valid
-
+  const session = await mongoose.startSession(); // using sessions to make sure we only save a customer if a user is valid          
   try {
     session.startTransaction();
 
     const savedCustomer = await registerCustomer(req, session);
     const savedUser = await registerUser(req, savedCustomer.id, session);
+
+    let profileImageUrl;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, { folder: 'profile-images' });
+      profileImageUrl = result.secure_url;
+      fs.unlinkSync(req.file.path);
+    }
+    savedUser.profileImageUrl = profileImageUrl;
+    await savedUser.save();
 
     // Close session and don't store anything if there's any error in either User or Customer
     if (savedCustomer.error || savedUser.error) {

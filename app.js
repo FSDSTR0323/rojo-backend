@@ -38,6 +38,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(ignoreFaviconMiddleware);
 
+// cloudinary config
+const cloudinaryConfig = {
+  cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+  apiKey: process.env.CLOUDINARY_API_KEY,
+  apiSecret: process.env.CLOUDINARY_API_SECRET
+};
+app.locals.cloudinaryConfig = cloudinaryConfig;
+
+
 // routes
 app.use('/', indexRouter);
 
@@ -59,5 +68,8 @@ app.use((err, req, res, next) => {
     error: err,
   });
 });
+
+
+
 
 module.exports = app;
