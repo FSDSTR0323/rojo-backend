@@ -2,6 +2,10 @@ const PERMISSIONS = require('../../utils/constants/permissions');
 
 const permissions = [
   {
+    code: PERMISSIONS.DASHBOARD_READ,
+    description: 'Allows access to the control dashboard',
+  },
+  {
     code: PERMISSIONS.USER_CREATE,
     description: 'Allows to create new users inside a Customer',
   },
