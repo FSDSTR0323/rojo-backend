@@ -42,7 +42,7 @@ const recipes = [
       use: ['Hot holding', 'Cold holding'],
     },
     imageUrl:
-      'https://www.fleischglueck.de/wp-content/uploads/2020/08/filet_wellington_fleischglueck_magazin_teaser.jpg',
+      'https://thebigmansworld.com/wp-content/uploads/2023/02/beef-wellington-recipe.jpg',
     createdBy: {
       nickname: 'braulioheadchef',
     },
