@@ -7,7 +7,7 @@ const checkRequiredParamsMiddleware = require('../middleware/checkRequiredParams
 
 const PERMISSIONS = require('../utils/constants/permissions');
 
-const userController = require('../controllers/userController');
+const userController = require('../controllers/UserController');
 
 router.post(
   '/register',
