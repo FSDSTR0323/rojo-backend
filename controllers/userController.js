@@ -103,7 +103,7 @@ const registerCustomerAndUser = async (req, res) => {
       } else {
         return res.status(400).json({
           token: savedUser.generateJWT(),
-          error: "Mail don't send"
+          error: "Mail not sent"
         });
       }
         
