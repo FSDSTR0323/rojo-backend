@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { User, Customer, Role } = require('../database');
 const ROLES = require('../utils/constants/roles');
+const { sendMail } = require('./mailController');
 
 const registerCustomer = async (req, session) => {
   const { customerName, customerAddress, email, customerCif } = req.body;
@@ -55,6 +56,7 @@ const registerUser = async (req, customerId, session) => {
     role: existingRole._id,
   });
   const savedUser = await newUser.save({ session });
+
   return savedUser
     ? savedUser
     : { error: { status: 500, message: 'Error saving new User' } };
@@ -88,9 +90,23 @@ const registerCustomerAndUser = async (req, res) => {
     session.endSession();
 
     if (savedUser) {
-      return res.status(201).json({
-        token: savedUser.generateJWT(),
-      });
+      const paramsMail = {
+        subject: 'Welcome to Food Informer App',
+        userName: `${newUser.firstName} ${newUser.lastName}`,
+        userEmail: `${newUser.email}`
+      }
+      
+      if(sendMail(paramsMail)) {
+        return res.status(201).json({
+          token: savedUser.generateJWT(),
+        });
+      } else {
+        return res.status(400).json({
+          token: savedUser.generateJWT(),
+          error: "Mail don't send"
+        });
+      }
+        
     }
   } catch (error) {
     await session.abortTransaction();
@@ -233,6 +249,14 @@ const addUser = async (req, res) => {
       profileImageUrl,
       createdBy: id,
     });
+
+    const paramsMail = {
+      subject: 'Welcome to Food Informer App',
+      userName: `${newUser.firstName} ${newUser.lastName}`,
+      userEmail: `${newUser.email}`
+    }
+    
+    sendMail(paramsMail)
 
     const savedUser = await newUser.save();
     await savedUser.populate('customer role createdBy');

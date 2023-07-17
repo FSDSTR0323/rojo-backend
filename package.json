@@ -8,6 +8,7 @@
     "seed": "node ./utils/scripts/seed"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^1.0.1",
     "bcrypt": "^5.1.0",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
@@ -18,7 +19,8 @@
     "jade": "^1.9.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.1.1",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "sib-api-v3-sdk": "^8.5.0"
   },
   "devDependencies": {
     "eslint": "^8.41.0",
