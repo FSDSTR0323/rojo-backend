@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const { User, Customer, Role } = require('../database');
 const ROLES = require('../utils/constants/roles');
-const cloudinary = require('cloudinary');
 const { sendMail } = require('./mailController');
 
 const registerCustomer = async (req, session) => {
@@ -39,11 +38,11 @@ const registerUser = async (req, customerId, session) => {
   const existingRole = await Role.findOne({ name: role });
 
   if (existingUser)
-    return { error: { status: 400, message: 'Nickname already registered' } };
+    return { error: { status: 400, nickname: 'Nickname already registered' } };
   if (!existingCustomer)
-    return { error: { status: 404, message: 'CustomerId not found' } };
+    return { error: { status: 404, CustomerId: 'CustomerId not found' } };
   if (!existingRole)
-    return { error: { status: 400, message: 'Invalid user role' } };
+    return { error: { status: 400, role: 'Invalid user role' } };
 
   // Save user
   const newUser = new User({
@@ -64,21 +63,13 @@ const registerUser = async (req, customerId, session) => {
 };
 
 const registerCustomerAndUser = async (req, res) => {
-  const session = await mongoose.startSession(); // using sessions to make sure we only save a customer if a user is valid          
+  const session = await mongoose.startSession(); // using sessions to make sure we only save a customer if a user is valid
+
   try {
     session.startTransaction();
 
     const savedCustomer = await registerCustomer(req, session);
     const savedUser = await registerUser(req, savedCustomer.id, session);
-
-    let profileImageUrl;
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, { folder: 'profile-images' });
-      profileImageUrl = result.secure_url;
-      fs.unlinkSync(req.file.path);
-    }
-    savedUser.profileImageUrl = profileImageUrl;
-    await savedUser.save();
 
     // Close session and don't store anything if there's any error in either User or Customer
     if (savedCustomer.error || savedUser.error) {
@@ -235,7 +226,7 @@ const addUser = async (req, res) => {
     if (existingUser)
       return res.status(400).json({
         error: {
-          message: 'nickname already registered for the given customerId',
+          nickname: 'nickname already registered for the given customerId',
         },
       });
 
@@ -243,7 +234,7 @@ const addUser = async (req, res) => {
     if (!foundRole)
       return res.status(400).json({
         error: {
-          message: 'Invalid user role',
+          role: 'Invalid user role',
         },
       });
 
@@ -289,7 +280,7 @@ const addUser = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ error: { message: 'Error adding a new user into customer' } });
+      .json({ error: { formattedUser: 'Error adding a new user into customer' } });
   }
 };
 
@@ -303,7 +294,7 @@ const editUser = async (req, res) => {
     if (!existingUser) {
       return res.status(404).json({
         error: {
-          message: 'userId does not exist',
+          userId: 'userId does not exist',
         },
       });
     }
@@ -314,7 +305,7 @@ const editUser = async (req, res) => {
 
     if (role !== undefined && existingUser.role.name === ROLES.OWNER) {
       return res.status(400).json({
-        error: { message: 'User with Owner role cannnot edit its own role' },
+        error: { role: 'User with Owner role cannnot edit its own role' },
       });
     }
 
@@ -346,7 +337,7 @@ const deleteUser = async (req, res) => {
   if (userId === id)
     return res.status(400).json({
       error: {
-        message:
+        id:
           'User to delete is the same as the user requesting the deletion. Unauthorised action',
       },
     });
@@ -357,7 +348,7 @@ const deleteUser = async (req, res) => {
     if (!existingUser) {
       return res.status(404).json({
         error: {
-          message: 'userId does not exist',
+          userId: 'userId does not exist',
         },
       });
     }
@@ -370,7 +361,7 @@ const deleteUser = async (req, res) => {
     });
     return res.status(200).send('User Deleted');
   } catch (error) {
-    return res.status(500).json({ error: { message: 'Error deleting user' } });
+    return res.status(500).json({ error: { userId: 'Error deleting user' } });
   }
 };
 
