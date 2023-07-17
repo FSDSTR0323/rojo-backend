@@ -1,9 +1,12 @@
 const { Recipe, Validation, User } = require('../database');
 
-const getKpis = async (req, res, next) => {
+const getKpis = async (req) => {
   const { start, end } = req.query;
+  const { customerId } = req.jwtPayload;
 
-  const filter = {};
+  const filter = {
+    customer: customerId,
+  };
   if (start) filter.createdAt = { ...filter.createdAt, $gte: start };
   if (end) filter.createdAt = { ...filter.createdAt, $lte: end };
 
