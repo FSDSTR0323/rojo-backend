@@ -49,8 +49,8 @@ const sendMail = async (req, res) => {
                                         '</table>'+
                                     '</html>';
     sendSmtpEmail.sender = {"name":"Food Informer","email":"noreply@foodinformer.com"};
-    //sendSmtpEmail.to = [{"email":`${req.userEmail}`,"name":`${req.userName}`}];
-    sendSmtpEmail.to = [{"email":"marc.obiols.s@gmail.com","name":"Marc Obiols"}];
+    sendSmtpEmail.to = [{"email":`${req.userEmail}`,"name":`${req.userName}`}];
+    //endSmtpEmail.to = [{"email":"marc.obiols.s@gmail.com","name":"Marc Obiols"}];
     //sendSmtpEmail.cc = [{"email":"marc.obiols.s@gmail.com","name":"Janice Doe"}];
     //sendSmtpEmail.bcc = [{"email":"marc.obiols.s@gmail.com","name":"Marc"}];
     //sendSmtpEmail.replyTo = {"email":"marc.obiols.s@gmail.com","name":"John Doe"};
@@ -58,7 +58,7 @@ const sendMail = async (req, res) => {
     sendSmtpEmail.params = {"parameter":"My param value","subject":"New Subject"};
     
     apiInstance.sendTransacEmail(sendSmtpEmail).then(function(data) {
-      console.log('API called successfully. Returned data: ' + JSON.stringify(data));
+      //console.log('API called successfully. Returned data: ' + JSON.stringify(data));
       return true;
     }, function(error) {
       console.error(error);
