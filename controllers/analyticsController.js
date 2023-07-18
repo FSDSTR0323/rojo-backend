@@ -28,22 +28,43 @@ const getValidations = async (filter) => {
   }));
 };
 
+const getLineChart = async (model, filter) => {
+  const result = await model
+    .aggregate()
+    .match(filter)
+    .group({
+      _id: { $dateToString: { format: '%d-%m-%Y', date: '$createdAt' } },
+      count: { $sum: 1 },
+    })
+    .sort({ _id: 1 });
+
+  console.log('result', result);
+  return result;
+};
+
 const getData = async (req, res) => {
   const { start, end } = req.query;
   const { customerId } = req.jwtPayload;
 
   const filter = {
-    customer: customerId,
+    //customer: customerId,
   };
-  if (start) filter.createdAt = { ...filter.createdAt, $gte: start };
-  if (end) filter.createdAt = { ...filter.createdAt, $lte: end };
+  if (start) filter.createdAt = { ...filter.createdAt, $gte: new Date(start) };
+  if (end) filter.createdAt = { ...filter.createdAt, $lte: new Date(end) };
 
   const kpis = await getKpis(filter);
   const validationList = await getValidations(filter);
+  const recipesLineChartData = await getLineChart(Recipe, filter);
 
   return res.status(200).json({
     kpis,
     validationList,
+    lineCharts: [
+      {
+        seriesName: 'Recipes',
+        data: recipesLineChartData,
+      },
+    ],
   });
 };
 
