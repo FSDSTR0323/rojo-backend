@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId
+const ObjectId = mongoose.Types.ObjectId;
 const { Recipe, Validation, User } = require('../database');
-const formatDate = require('../utils/helperFunctions/formatDate');
+const {
+  formatDate,
+  generateDateRangeArray,
+} = require('../utils/helperFunctions/formatDate');
 
 const getKpis = async (filter) => {
   const recipeCount = await Recipe.countDocuments(filter);
@@ -31,17 +34,30 @@ const getValidations = async (filter) => {
 };
 
 const getLineChart = async (model, filter) => {
-  const result = await model
+  const data = await model
     .aggregate()
     .match(filter)
     .group({
-      _id: { $dateToString: { format: '%d-%m-%Y', date: '$createdAt' } },
+      _id: { $dateToString: { format: '%d/%m/%Y', date: '$createdAt' } },
       count: { $sum: 1 },
     })
     .sort({ _id: 1 });
 
-  console.log('result', result);
-  return result;
+  console.log(data);
+  return data;
+};
+
+const generateYAxis = (data, xAxis) => {
+  const yAxis = Array(xAxis.length).fill(0);
+
+  data.forEach(({ _id, count }) => {
+    const index = xAxis.indexOf(_id);
+    if (index !== -1) {
+      yAxis[index] = count;
+    }
+  });
+
+  return yAxis;
 };
 
 const getData = async (req, res) => {
@@ -50,6 +66,7 @@ const getData = async (req, res) => {
 
   const filter = {
     customer: new ObjectId(customerId),
+    deletedAt: { $exists: false },
   };
   if (start) filter.createdAt = { ...filter.createdAt, $gte: new Date(start) };
   if (end) filter.createdAt = { ...filter.createdAt, $lte: new Date(end) };
@@ -57,6 +74,9 @@ const getData = async (req, res) => {
   const kpis = await getKpis(filter);
   const validationList = await getValidations(filter);
   const recipesLineChartData = await getLineChart(Recipe, filter);
+  const validationsLineChartData = await getLineChart(Validation, filter);
+
+  const dateAxis = generateDateRangeArray(start, end);
 
   return res.status(200).json({
     kpis,
@@ -64,7 +84,17 @@ const getData = async (req, res) => {
     lineCharts: [
       {
         seriesName: 'Recipes',
-        data: recipesLineChartData,
+        data: {
+          xAxis: generateDateRangeArray(start, end),
+          yAxis: generateYAxis(recipesLineChartData, dateAxis),
+        },
+      },
+      {
+        seriesName: 'Validations',
+        data: {
+          xAxis: generateDateRangeArray(start, end),
+          yAxis: generateYAxis(validationsLineChartData, dateAxis),
+        },
       },
     ],
   });
