@@ -1,4 +1,5 @@
 const { Recipe, Validation, User } = require('../database');
+const formatDate = require('../utils/helperFunctions/formatDate');
 
 const getKpis = async (filter) => {
   const recipeCount = await Recipe.countDocuments(filter);
@@ -13,11 +14,18 @@ const getKpis = async (filter) => {
 };
 
 const getValidations = async (filter) => {
-  const validations = Validation.find(filter)
+  const validations = await Validation.find(filter)
     .populate({ path: 'createdBy', select: 'firstName lastName nickname' })
-    .select('name validationStatus');
+    .select('name validationStatus createdAt');
 
-  return validations;
+  return validations.map((validation) => ({
+    _id: validation._id,
+    name: validation.name,
+    createdBy: `${validation.createdBy.firstName} ${validation.createdBy.lastName}`,
+    nickname: validation.createdBy.nickname,
+    status: validation.validationStatus,
+    createdAt: formatDate(validation.createdAt),
+  }));
 };
 
 const getData = async (req, res) => {
