@@ -43,7 +43,6 @@ const getLineChart = async (model, filter) => {
     })
     .sort({ _id: 1 });
 
-  console.log(data);
   return data;
 };
 
@@ -71,33 +70,44 @@ const getData = async (req, res) => {
   if (start) filter.createdAt = { ...filter.createdAt, $gte: new Date(start) };
   if (end) filter.createdAt = { ...filter.createdAt, $lte: new Date(end) };
 
-  const kpis = await getKpis(filter);
-  const validationList = await getValidations(filter);
-  const recipesLineChartData = await getLineChart(Recipe, filter);
-  const validationsLineChartData = await getLineChart(Validation, filter);
+  try {
+    const kpis = await getKpis(filter);
+    const validationList = await getValidations(filter);
+    const recipesLineChartData = await getLineChart(Recipe, filter);
+    const validationsLineChartData = await getLineChart(Validation, filter);
 
-  const dateAxis = generateDateRangeArray(start, end);
+    const dateAxis = generateDateRangeArray(start, end);
 
-  return res.status(200).json({
-    kpis,
-    validationList,
-    lineCharts: [
-      {
-        seriesName: 'Recipes',
-        data: {
-          xAxis: generateDateRangeArray(start, end),
-          yAxis: generateYAxis(recipesLineChartData, dateAxis),
+    return res.status(200).json({
+      kpis,
+      validationList,
+      lineCharts: [
+        {
+          seriesName: 'Recipes',
+          data: {
+            xAxis: generateDateRangeArray(start, end),
+            yAxis: generateYAxis(recipesLineChartData, dateAxis),
+          },
         },
-      },
-      {
-        seriesName: 'Validations',
-        data: {
-          xAxis: generateDateRangeArray(start, end),
-          yAxis: generateYAxis(validationsLineChartData, dateAxis),
+        {
+          seriesName: 'Validations',
+          data: {
+            xAxis: generateDateRangeArray(start, end),
+            yAxis: generateYAxis(validationsLineChartData, dateAxis),
+          },
         },
+      ],
+      pieChart: {
+        labels: ['Accepted', 'Refused'],
+        data: [
+          validationList.filter((validation) => validation.status).length,
+          validationList.filter((validation) => !validation.status).length,
+        ],
       },
-    ],
-  });
+    });
+  } catch (error) {
+    return res.status(500).json({ error: { message: 'Error accessing data' } });
+  }
 };
 
 module.exports = {
