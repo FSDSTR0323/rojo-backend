@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId
 const { Recipe, Validation, User } = require('../database');
 const formatDate = require('../utils/helperFunctions/formatDate');
 
@@ -47,7 +49,7 @@ const getData = async (req, res) => {
   const { customerId } = req.jwtPayload;
 
   const filter = {
-    //customer: customerId,
+    customer: new ObjectId(customerId),
   };
   if (start) filter.createdAt = { ...filter.createdAt, $gte: new Date(start) };
   if (end) filter.createdAt = { ...filter.createdAt, $lte: new Date(end) };
