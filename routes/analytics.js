@@ -12,7 +12,7 @@ router.get(
   '/',
   jwtMiddleware,
   userInfoMiddleware,
-  checkPermissionsMiddleware(PERMISSIONS.CUSTOMER_READ),
+  checkPermissionsMiddleware(PERMISSIONS.DASHBOARD_READ),
   analyticsController.getData
 );
 
