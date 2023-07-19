@@ -219,10 +219,11 @@ const formatValidationForMongo = async (validation) => {
       haccp: filteredHaccp._id,
       valid: validArray[index],
       comment: !validArray[index] ? 'lorem ipsum dolor sit amet' : undefined,
+      correctiveAction: !validArray[index]
+        ? filteredHaccp.correctiveActions[0]
+        : undefined,
     };
-
-    if (!step.valid) step.correctiveActions = filteredHaccp.correctiveActions;
-
+    
     return step;
   });
 
