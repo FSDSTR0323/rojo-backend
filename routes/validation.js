@@ -3,7 +3,6 @@ const router = express.Router();
 const jwtMiddleware = require('../middleware/jwtMiddleware');
 const userInfoMiddleware = require('../middleware/userInfoMiddleware');
 const checkPermissionsMiddleware = require('../middleware/checkPermissionsMiddleware');
-const checkRequiredParamsMiddleware = require('../middleware/checkRequiredParamsMiddleware');
 
 const PERMISSIONS = require('../utils/constants/permissions');
 
