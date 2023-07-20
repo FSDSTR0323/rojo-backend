@@ -19,7 +19,7 @@ const roles = [
     name: ROLES.CHEF,
     permissions: permissions.filter(
       (permission) =>
-        permission.code.includes('recipe') ||
+        permission.code.includes('recipe.read') ||
         permission.code.includes('validation')
     ),
   },

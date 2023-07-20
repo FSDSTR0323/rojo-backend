@@ -1,7 +1,4 @@
 const sendMail = async (req, res) => {
-
-    console.log("req", req)
-
     const SibApiV3Sdk = require('sib-api-v3-sdk');
     let defaultClient = SibApiV3Sdk.ApiClient.instance;
     
@@ -58,7 +55,6 @@ const sendMail = async (req, res) => {
     sendSmtpEmail.params = {"parameter":"My param value","subject":"New Subject"};
     
     apiInstance.sendTransacEmail(sendSmtpEmail).then(function(data) {
-      //console.log('API called successfully. Returned data: ' + JSON.stringify(data));
       return true;
     }, function(error) {
       console.error(error);

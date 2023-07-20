@@ -7,15 +7,15 @@ const StepSchema = new Schema(
     valid: { type: Boolean, required: true },
     correctiveAction: {
       type: String,
-      required: function () {
-        return !this.valid;
-      },
+      // required: function () {
+      //   return this.valid !== 'true';
+      // },
     },
     comment: {
       type: String,
-      required: function () {
-        return !this.valid;
-      },
+      // required: function () {
+      //   return this.valid !== 'true';
+      // },
     },
   },
   { _id: false }
