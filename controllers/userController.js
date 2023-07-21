@@ -92,21 +92,20 @@ const registerCustomerAndUser = async (req, res) => {
     if (savedUser) {
       const paramsMail = {
         subject: 'Welcome to Food Informer App',
-        userName: `${newUser.firstName} ${newUser.lastName}`,
-        userEmail: `${newUser.email}`
-      }
-      
-      if(sendMail(paramsMail)) {
+        userName: `${savedUser.firstName} ${savedUser.lastName}`,
+        userEmail: `${savedUser.email}`,
+      };
+
+      if (sendMail(paramsMail)) {
         return res.status(201).json({
           token: savedUser.generateJWT(),
         });
       } else {
         return res.status(400).json({
           token: savedUser.generateJWT(),
-          error: "Mail not sent"
+          error: 'Mail not sent',
         });
       }
-        
     }
   } catch (error) {
     await session.abortTransaction();
@@ -253,10 +252,10 @@ const addUser = async (req, res) => {
     const paramsMail = {
       subject: 'Welcome to Food Informer App',
       userName: `${newUser.firstName} ${newUser.lastName}`,
-      userEmail: `${newUser.email}`
-    }
-    
-    sendMail(paramsMail)
+      userEmail: `${newUser.email}`,
+    };
+
+    sendMail(paramsMail);
 
     const savedUser = await newUser.save();
     await savedUser.populate('customer role createdBy');
@@ -280,7 +279,9 @@ const addUser = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ error: { formattedUser: 'Error adding a new user into customer' } });
+      .json({
+        error: { formattedUser: 'Error adding a new user into customer' },
+      });
   }
 };
 
@@ -337,8 +338,7 @@ const deleteUser = async (req, res) => {
   if (userId === id)
     return res.status(400).json({
       error: {
-        id:
-          'User to delete is the same as the user requesting the deletion. Unauthorised action',
+        id: 'User to delete is the same as the user requesting the deletion. Unauthorised action',
       },
     });
 
