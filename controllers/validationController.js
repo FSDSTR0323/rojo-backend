@@ -21,8 +21,6 @@ const addValidation = async (req, res) => {
   const { customerId, id } = req.jwtPayload;
   const { recipe, name, steps } = req.body;
 
-  console.log('steps', steps)
-
   try {
     const foundRecipe = await Recipe.findById(recipe);
 
